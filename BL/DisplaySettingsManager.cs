@@ -31,8 +31,7 @@ namespace BL
             if (durationSpan == null || durationSpan < TimeSpan.FromMinutes(3))
                 throw new Exception("Time span of this digital sign is smaller than 3 minutes or null");
 
-
-            //
+            //run once
             if (showEveryNthDay == null && consecutiveTimesToShow == null)
             {
                 displaySetting.ValidUntil = displaySetting.StartTime.Add(durationSpan);
@@ -86,9 +85,12 @@ namespace BL
             }
             else if (setting.ConsecutiveTimesToShow != null)
             {
+                int nOfDays = (int)Math.Ceiling(setting.DurationSpan.TotalDays);
                 for (int i = 0; i < setting.ConsecutiveTimesToShow; i++)
                 {
-                    
+                    DateTime start = setting.StartTime.AddDays(i*nOfDays);
+                    DateTime end = setting.StartTime.Add(setting.DurationSpan).AddDays(i*nOfDays);
+                    times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, start, end, setting.ShowEveryNthDay));
                 }
             }
 
