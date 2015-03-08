@@ -17,7 +17,7 @@ namespace UnitTests
             var manager = new DisplaySettingsManager();
             var terminals = new List<Terminal>(){new Terminal(){Name="First terminal"}};
 
-            manager.CreateNewDisplaySetting(terminals, DateTime.Today.AddDays(-1), TimeSpan.FromDays(1), null, null);
+            manager.CreateDisplaySettingForDigitalSign(terminals, DateTime.Today.AddDays(-1), TimeSpan.FromDays(1), null, null, null);
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace UnitTests
             var manager = new DisplaySettingsManager();
             var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
 
-            manager.CreateNewDisplaySetting(terminals, DateTime.Today, TimeSpan.FromMinutes(2), null, null);
+            manager.CreateDisplaySettingForDigitalSign(terminals, DateTime.Today, TimeSpan.FromMinutes(2), null, null, null);
         }
 
         [TestMethod]
@@ -37,7 +37,7 @@ namespace UnitTests
             var manager = new DisplaySettingsManager();
             var terminals = new List<Terminal>();
 
-            manager.CreateNewDisplaySetting(terminals, DateTime.Today, TimeSpan.FromMinutes(10), null, null);
+            manager.CreateDisplaySettingForDigitalSign(terminals, DateTime.Today, TimeSpan.FromMinutes(10), null, null, null);
         }
 
 
@@ -49,7 +49,7 @@ namespace UnitTests
             var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
             var time = DateTime.Now;
 
-            var setting = manager.CreateNewDisplaySetting(terminals, time, TimeSpan.FromHours(23), null, 0);
+            var setting = manager.CreateDisplaySettingForDigitalSign(terminals, time, TimeSpan.FromHours(23), null, 0, null);
         }
 
         [TestMethod]
@@ -59,7 +59,7 @@ namespace UnitTests
             var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
             var time = DateTime.Now;
 
-            var setting = manager.CreateNewDisplaySetting(terminals, time, TimeSpan.FromHours(25), null, 4);
+            var setting = manager.CreateDisplaySettingForDigitalSign(terminals, time, TimeSpan.FromHours(25), null, 4, null);
             //Adding only 6 days because current day is also counted
             Assert.AreEqual(time.Add(TimeSpan.FromHours(25)).Add(TimeSpan.FromDays(6)), setting.ValidUntil);
         }

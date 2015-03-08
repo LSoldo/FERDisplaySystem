@@ -49,7 +49,7 @@
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DigitalSign.cs" />
     <Compile Include="Model\DisplaySetting.cs" />
-    <Compile Include="Model\DisplayTime.cs" />
+    <Compile Include="Model\ScheduledDisplayTime.cs" />
     <Compile Include="Model\Terminal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
