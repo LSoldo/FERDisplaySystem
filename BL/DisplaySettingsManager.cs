@@ -10,7 +10,7 @@ namespace BL
 {
     public class DisplaySettingsManager
     {
-        public DisplaySetting CreateDisplaySettingForDigitalSign(List<Terminal> terminals,
+        public List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals,
             DateTime startTime,
             TimeSpan durationSpan,
             int? showEveryNthDay,
@@ -18,7 +18,12 @@ namespace BL
             DigitalSign sign)
         {
             DisplaySetting displaySetting = new DisplaySetting();
-            
+            displaySetting.InsertionTS = DateTime.Now;
+            displaySetting.StartTime = startTime;
+            displaySetting.ShowEveryNthDay = showEveryNthDay;
+            displaySetting.ConsecutiveTimesToShow = consecutiveTimesToShow;
+            displaySetting.DurationSpan = durationSpan;
+
             if (terminals == null || terminals.Count == 0)
                 throw new Exception("No terminals are inserted for this display setting");
 
@@ -31,67 +36,48 @@ namespace BL
             if (durationSpan == null || durationSpan < TimeSpan.FromMinutes(3))
                 throw new Exception("Time span of this digital sign is smaller than 3 minutes or null");
 
-            //run once
-            if (showEveryNthDay == null && consecutiveTimesToShow == null)
-            {
-                displaySetting.ValidUntil = displaySetting.StartTime.Add(durationSpan);
-            }
+            if (consecutiveTimesToShow == 0)
+                throw new Exception("Consecutive number of times displayed should be bigger than zero.");
+
+            var times = CreateDisplayTimes(terminals, displaySetting, sign);
+
+            if (showEveryNthDay != null && (consecutiveTimesToShow == null || consecutiveTimesToShow == 0))
+                displaySetting.ValidUntil = DateTime.MaxValue;
             else
-            {
-                //just show content for consecutive number of days
-                if (showEveryNthDay == null)
-                {
-                    int nOfDays = (int) Math.Ceiling(durationSpan.TotalDays);
+                displaySetting.ValidUntil = times.Last().EndTime;
 
-                    if (consecutiveTimesToShow == 0)
-                        throw new Exception("Consecutive number of times displayed should be bigger than zero.");
-                    else
-                    {
-                        displaySetting.ValidUntil =
-                            displaySetting.StartTime.Add(durationSpan)
-                                .Add(TimeSpan.FromDays((double) (consecutiveTimesToShow*nOfDays - nOfDays)));
-                    }
-                }
-                //periodic showing, not gonna end
-                else
-                {
-                    displaySetting.ValidUntil = DateTime.MaxValue;
-                }
-            }
-
-            displaySetting.InsertionTS = DateTime.Now;
-            displaySetting.StartTime = startTime;
-            displaySetting.ShowEveryNthDay = showEveryNthDay;
-            displaySetting.ConsecutiveTimesToShow = consecutiveTimesToShow;
-            displaySetting.DurationSpan = durationSpan;
-
-            CreateDisplayTimesForTerminal(terminals, displaySetting, sign);
-
-            return displaySetting;
+            return times;
         }
 
-        public List<ScheduledDisplayTime> CreateDisplayTimesForTerminal(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign)
+        private List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign)
         {
             List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            int nOfDays = (int)Math.Ceiling(setting.DurationSpan.TotalDays);
             
             //play once
             if (setting.ShowEveryNthDay == null && setting.ConsecutiveTimesToShow == null)
             {
                 times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, setting.StartTime, setting.ValidUntil, setting.ShowEveryNthDay));
             }
-            else if (setting.ShowEveryNthDay != null)
-            {
-                times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, setting.StartTime, setting.StartTime.Add(setting.DurationSpan), setting.ShowEveryNthDay));
-            }
             else if (setting.ConsecutiveTimesToShow != null)
             {
-                int nOfDays = (int)Math.Ceiling(setting.DurationSpan.TotalDays);
+                int showEveryNthDay = setting.ShowEveryNthDay == null || setting.ShowEveryNthDay == 0 ? 0 : (int)setting.ShowEveryNthDay;
+
+                DateTime startTime = setting.StartTime;
                 for (int i = 0; i < setting.ConsecutiveTimesToShow; i++)
                 {
-                    DateTime start = setting.StartTime.AddDays(i*nOfDays);
-                    DateTime end = setting.StartTime.Add(setting.DurationSpan).AddDays(i*nOfDays);
-                    times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, start, end, setting.ShowEveryNthDay));
+                    //offset is defined because adding days while we have overflow to other day is not the same as when we don't!
+                    int offset = i == 0 || showEveryNthDay == 0 ? 0 : startTime.Date != startTime.Add(setting.DurationSpan).Date ? 0 : -1;
+
+                    DateTime start = startTime.AddDays((double)((i * nOfDays) + i * showEveryNthDay)).AddDays(offset);
+                    DateTime end = startTime.Add(setting.DurationSpan).AddDays((double)((i * nOfDays) + i * showEveryNthDay)).AddDays(offset);
+                    times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, start, end, null));                  
                 }
+            }
+            else if (setting.ShowEveryNthDay != null )
+            {
+                times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, setting.StartTime, setting.StartTime.Add(setting.DurationSpan), setting.ShowEveryNthDay));
             }
 
             return times;
@@ -109,6 +95,33 @@ namespace BL
             time.Active = true;
 
             return time;
+        }
+
+        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes, DateTime newTime)
+        {
+            return scheduledTimes.Any(t => t.StartTime <= newTime && t.EndTime >= newTime);
+        }
+
+        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes,
+            ScheduledDisplayTime newTimeToCheck)
+        {
+            return
+                scheduledTimes.Any(
+                    t =>
+                        (t.StartTime <= newTimeToCheck.StartTime && t.EndTime >= newTimeToCheck.StartTime) ||
+                        (t.StartTime <= newTimeToCheck.EndTime && t.EndTime >= newTimeToCheck.EndTime) ||
+                        (t.StartTime > newTimeToCheck.StartTime && t.EndTime < newTimeToCheck.EndTime));
+        }
+
+        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes,
+            List<ScheduledDisplayTime> newTimesToCheck)
+        {
+            foreach (var newTime in newTimesToCheck)
+            {
+                if (IsOverlappingWithExistingDate(scheduledTimes, newTime))
+                    return true;               
+            }
+            return false;
         }
     }
 }
