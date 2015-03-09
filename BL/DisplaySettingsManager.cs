@@ -108,8 +108,8 @@ namespace BL
             return
                 scheduledTimes.Any(
                     t =>
-                        (t.StartTime <= newTimeToCheck.StartTime && t.EndTime >= newTimeToCheck.StartTime) ||
-                        (t.StartTime <= newTimeToCheck.EndTime && t.EndTime >= newTimeToCheck.EndTime) ||
+                        (t.StartTime <= newTimeToCheck.StartTime && t.EndTime > newTimeToCheck.StartTime) ||
+                        (t.StartTime < newTimeToCheck.EndTime && t.EndTime >= newTimeToCheck.EndTime) ||
                         (t.StartTime > newTimeToCheck.StartTime && t.EndTime < newTimeToCheck.EndTime));
         }
 

@@ -98,7 +98,152 @@ namespace UnitTests
             Assert.AreEqual(true, areOverlapping);
         }
 
-        
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_StartOfTheFirstIsEndOfTheSecond_False()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(-1), TimeSpan.FromHours(1), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(false, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_SecondsGoesOneHourAfterStartOfTheFirst_True()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(-1), TimeSpan.FromHours(2), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(true, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_SecondOutsideOfFirst_False()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(5), TimeSpan.FromHours(2), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(false, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_StartOfTheSecondIsEndOfTheFirst_False()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(2), TimeSpan.FromHours(2), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(false, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_SecondIsCompletelyOverlappingFirst_True()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(-1), TimeSpan.FromHours(5), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(true, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_SecondIsCompletelyInsideFirst_True()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime, TimeSpan.FromHours(2), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(true, areOverlapping);
+        }
+
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_SecondIsCompletelyInsideFirst2_True()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminals = new List<Terminal>() { new Terminal() { Name = "First terminal" } };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminals, ds.StartTime, ds.DurationSpan, null, 1, sign);
+            var times2 = manager.CreateDisplayTimes(terminals, ds.StartTime.AddHours(0.5), TimeSpan.FromHours(0.5), null, 1, sign);
+
+            bool areOverlapping = manager.IsOverlappingWithExistingDate(times1, times2);
+            Assert.AreEqual(true, areOverlapping);
+        }
 
     }
 }
