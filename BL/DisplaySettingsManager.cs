@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DAL.Model;
 using DAL;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace BL
 {
@@ -141,6 +140,156 @@ namespace BL
         public string ConvertScheduledTimesToJson(List<ScheduledDisplayTime> times)
         {
             return JsonConvert.SerializeObject(times);
+        }
+
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(Terminal terminal)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.FirstOrDefault(
+                    t => t.Active && 
+                        t.Terminal == terminal && 
+                        t.StartTime <= DateTime.Now && 
+                        t.EndTime >= DateTime.Now);
+        }
+
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(Terminal terminal, DateTime time)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.FirstOrDefault(
+                    t => t.Active &&
+                        t.Terminal == terminal &&
+                        t.StartTime <= time &&
+                        t.EndTime >= time);
+        }
+
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(int terminalId)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.FirstOrDefault(
+                    t => t.Active &&
+                        t.Terminal.Id == terminalId &&
+                        t.StartTime <= DateTime.Now &&
+                        t.EndTime >= DateTime.Now);
+        }
+
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(int terminalId, DateTime time)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.FirstOrDefault(
+                    t => t.Active &&
+                        t.Terminal.Id == terminalId &&
+                        t.StartTime <= time &&
+                        t.EndTime >= time);
+        }
+
+        public List<ScheduledDisplayTime> GetScheduleForTerminal(int terminalId)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => t.Active &&
+                        t.Terminal.Id == terminalId)
+                        .ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal, DateTime timeFrom, DateTime timeTo)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t =>
+                        ((t.StartTime <= timeFrom && t.EndTime > timeFrom) ||
+                        (t.StartTime < timeTo && t.EndTime >= timeTo) ||
+                        (t.StartTime > timeFrom && t.EndTime < timeTo)) &&
+                        t.Active &&
+                        t.Terminal == terminal).ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetScheduleForTerminal(int terminalId, DateTime timeFrom, DateTime timeTo)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t =>
+                        ((t.StartTime <= timeFrom && t.EndTime > timeFrom) ||
+                        (t.StartTime < timeTo && t.EndTime >= timeTo) ||
+                        (t.StartTime > timeFrom && t.EndTime < timeTo)) &&
+                        t.Active &&
+                        t.Terminal.Id == terminalId).ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => t.Active &&
+                        t.Terminal == terminal)
+                        .ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetEntireHistoryForTerminal(Terminal terminal)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => t.Terminal == terminal)
+                    .ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetEntireHistoryForTerminal(int terminalId)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => t.Terminal.Id == terminalId)
+                    .ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetInactiveScheduleForTerminal(Terminal terminal)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => !t.Active && t.Terminal == terminal)
+                    .ToList();
+        }
+
+        public List<ScheduledDisplayTime> GetInactiveScheduleForTerminal(int terminalId)
+        {
+            //TODO ORM
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+
+            return
+                times.Where(
+                    t => !t.Active && t.Terminal.Id == terminalId)
+                    .ToList();
         }
 
 

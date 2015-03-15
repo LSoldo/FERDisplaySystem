@@ -253,6 +253,30 @@ namespace UnitTests
             Assert.AreEqual(30, times.Count);
         }
 
+        [TestMethod]
+        public void IsOverlappingWithExistingDate_2HourVoid_False()
+        {
+            var manager = new DisplaySettingsManager();
+            var terminal = new Terminal() { Name = "prvi terminal" };
+            var time = DateTime.Now;
+
+            DisplaySetting ds = new DisplaySetting();
+            ds.StartTime = time;
+            ds.DurationSpan = TimeSpan.FromHours(2);
+
+            DigitalSign sign = new DigitalSign();
+            sign.Name = "sign";
+
+            var times1 = manager.CreateDisplayTimes(terminal, ds.StartTime, ds.DurationSpan, TimeSpan.FromHours(2), null, sign, "Event");
+            var times2 = manager.CreateDisplayTimes(terminal, ds.StartTime.Add(TimeSpan.FromHours(2)), ds.DurationSpan, TimeSpan.FromHours(2), null, sign, "Event");
+            var json1 = manager.ConvertScheduledTimesToJson(times1);
+            var json2 = manager.ConvertScheduledTimesToJson(times2);
+
+            Assert.AreEqual(false, manager.IsOverlappingWithExistingDate(times1, times2));
+
+
+        }
+
 
 
     }
