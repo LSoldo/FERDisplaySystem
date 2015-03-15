@@ -21,5 +21,16 @@ namespace DAL
             public static string Periodically = "P";
             public static string NTimes = "NT";
         }
+
+        public abstract class RepeatTimes
+        {
+            public static int Once = 1;
+            public static int Twice = 2;
+            public static int Thrice = 3;
+            public static int Ten = 10;
+            public static int Month = 30;
+            public static int Hundred = 100;
+            public static int Year = 365;
+        }
     }
 }

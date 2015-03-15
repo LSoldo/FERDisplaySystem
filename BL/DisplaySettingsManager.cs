@@ -5,27 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using DAL.Model;
 using DAL;
+using Newtonsoft.Json;
 
 namespace BL
 {
     public class DisplaySettingsManager
     {
-        public List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals,
+        public List<ScheduledDisplayTime> CreateDisplayTimes(Terminal terminal,
             DateTime startTime,
             TimeSpan durationSpan,
-            int? showEveryNthDay,
+            TimeSpan? showEvery,
             int? consecutiveTimesToShow,
-            DigitalSign sign)
+            DigitalSign sign,
+            string name
+            )
         {
             DisplaySetting displaySetting = new DisplaySetting();
             displaySetting.InsertionTS = DateTime.Now;
             displaySetting.StartTime = startTime;
-            displaySetting.ShowEveryNthDay = showEveryNthDay;
+            displaySetting.ShowEvery = showEvery;
             displaySetting.ConsecutiveTimesToShow = consecutiveTimesToShow;
+            displaySetting.Name = name;
             displaySetting.DurationSpan = durationSpan;
 
-            if (terminals == null || terminals.Count == 0)
-                throw new Exception("No terminals are inserted for this display setting");
+            if (terminal == null)
+                throw new Exception("No terminal are inserted for this display setting");
 
             if (sign == null)
                 throw new Exception("Digital content for this terminal should not be null");
@@ -36,12 +40,9 @@ namespace BL
             if (durationSpan == null || durationSpan < TimeSpan.FromMinutes(3))
                 throw new Exception("Time span of this digital sign is smaller than 3 minutes or null");
 
-            if (consecutiveTimesToShow == 0)
-                throw new Exception("Consecutive number of times displayed should be bigger than zero.");
+            var times = CreateDisplayTimes(terminal, displaySetting, sign);
 
-            var times = CreateDisplayTimes(terminals, displaySetting, sign);
-
-            if (showEveryNthDay != null && (consecutiveTimesToShow == null || consecutiveTimesToShow == 0))
+            if (showEvery.HasValue && (consecutiveTimesToShow == null || consecutiveTimesToShow == 0))
                 displaySetting.ValidUntil = DateTime.MaxValue;
             else
                 displaySetting.ValidUntil = times.Last().EndTime;
@@ -49,50 +50,63 @@ namespace BL
             return times;
         }
 
-        private List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign)
+        private List<ScheduledDisplayTime> CreateDisplayTimes(Terminal terminal, DisplaySetting setting, DigitalSign sign)
         {
             List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
 
             int nOfDays = (int)Math.Ceiling(setting.DurationSpan.TotalDays);
             
             //play once
-            if (setting.ShowEveryNthDay == null && setting.ConsecutiveTimesToShow == null)
+            if ((!setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero) && (setting.ConsecutiveTimesToShow == null || setting.ConsecutiveTimesToShow == 0))
             {
-                times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, setting.StartTime, setting.ValidUntil, setting.ShowEveryNthDay));
+                times.Add(MapDisplaySettingToDisplayTime(terminal, setting, sign, setting.StartTime, setting.ValidUntil, setting.ShowEvery));
             }
-            else if (setting.ConsecutiveTimesToShow != null)
+            else if (setting.ConsecutiveTimesToShow != null && setting.ConsecutiveTimesToShow != 0)
             {
-                int showEveryNthDay = setting.ShowEveryNthDay == null || setting.ShowEveryNthDay == 0 ? 0 : (int)setting.ShowEveryNthDay;
-
-                DateTime startTime = setting.StartTime;
-                for (int i = 0; i < setting.ConsecutiveTimesToShow; i++)
-                {
-                    //offset is defined because adding days while we have overflow to other day is not the same as when we don't!
-                    int offset = i == 0 || showEveryNthDay == 0 ? 0 : startTime.Date != startTime.Add(setting.DurationSpan).Date ? 0 : -1;
-
-                    DateTime start = startTime.AddDays((double)((i * nOfDays) + i * showEveryNthDay)).AddDays(offset);
-                    DateTime end = startTime.Add(setting.DurationSpan).AddDays((double)((i * nOfDays) + i * showEveryNthDay)).AddDays(offset);
-                    times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, start, end, null));                  
-                }
+                times = CreateSchedule(terminal, setting, sign, setting.ConsecutiveTimesToShow);
             }
-            else if (setting.ShowEveryNthDay != null )
+                //indefinite play
+            else if (setting.ShowEvery.HasValue)
             {
-                times.Add(MapDisplaySettingToDisplayTime(terminals, setting, sign, setting.StartTime, setting.StartTime.Add(setting.DurationSpan), setting.ShowEveryNthDay));
+                times = CreateSchedule(terminal, setting, sign, DataDefinition.RepeatTimes.Month);
             }
 
             return times;
         }
 
-        private ScheduledDisplayTime MapDisplaySettingToDisplayTime(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign, DateTime startTime, DateTime endTime, int? indefiniteRun)
+        private List<ScheduledDisplayTime> CreateSchedule(Terminal terminal, DisplaySetting setting, DigitalSign sign, int? numberOfEvents)
+        {
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+            TimeSpan showEvery = !setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero
+                ? TimeSpan.Zero
+                : setting.ShowEvery.Value;
+
+            DateTime startTime = setting.StartTime;
+            DateTime endTime = setting.StartTime.Add(setting.DurationSpan);
+            for (int i = 0; i < numberOfEvents; i++)
+            {
+                //offset is defined because adding days while we have overflow to other day is not the same as when we don't!
+                TimeSpan multipliedSkippedTime = TimeSpan.FromTicks(i*showEvery.Ticks);
+                TimeSpan multipliedDuration = TimeSpan.FromTicks(i*setting.DurationSpan.Ticks);
+
+                DateTime start = startTime.Add(multipliedDuration + multipliedSkippedTime);
+                DateTime end = endTime.Add(multipliedDuration + multipliedSkippedTime);
+                times.Add(MapDisplaySettingToDisplayTime(terminal, setting, sign, start, end, null));
+            }
+            return times;
+        }
+
+        private ScheduledDisplayTime MapDisplaySettingToDisplayTime(Terminal terminal, DisplaySetting setting, DigitalSign sign, DateTime startTime, DateTime endTime, TimeSpan? indefiniteRun)
         {
             ScheduledDisplayTime time = new ScheduledDisplayTime();            
-            time.Terminals = terminals;
+            time.Terminal = terminal;
             time.DisplaySetting = setting;
             time.DigitalSign = sign;           
             time.StartTime = startTime;
             time.EndTime = endTime;
-            time.IndefiniteRunEveryNDays = indefiniteRun;
+            time.IndefiniteRunEvery = indefiniteRun;
             time.Active = true;
+            time.Name = setting.Name;
 
             return time;
         }
@@ -123,5 +137,12 @@ namespace BL
             }
             return false;
         }
+
+        public string ConvertScheduledTimesToJson(List<ScheduledDisplayTime> times)
+        {
+            return JsonConvert.SerializeObject(times);
+        }
+
+
     }
 }
