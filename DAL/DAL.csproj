@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DalDisplaySetting.cs" />
+    <Compile Include="DalTerminal.cs" />
+    <Compile Include="DBContext.cs" />
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DigitalSign.cs" />
     <Compile Include="Model\DisplaySetting.cs" />

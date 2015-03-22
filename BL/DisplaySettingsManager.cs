@@ -4,13 +4,12 @@ using System.Linq;
 using DAL.Model;
 using DAL;
 using Newtonsoft.Json;
-using System.Linq;
 
 namespace BL
 {
     public class DisplaySettingsManager
     {
-        public List<ScheduledDisplayTime> CreateDisplayTimes(Terminal terminal,
+        public List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals,
             DateTime startTime,
             TimeSpan durationSpan,
             TimeSpan? showEvery,
@@ -27,7 +26,7 @@ namespace BL
             displaySetting.Name = name;
             displaySetting.DurationSpan = durationSpan;
 
-            if (terminal == null)
+            if (terminals == null || terminals.Count == 0)
                 throw new Exception("No terminal are inserted for this display setting");
 
             if (sign == null)
@@ -39,43 +38,50 @@ namespace BL
             if (durationSpan == null || durationSpan < TimeSpan.FromMinutes(3))
                 throw new Exception("Time span of this digital sign is smaller than 3 minutes or null");
 
-            var times = CreateDisplayTimes(terminal, displaySetting, sign);
+            var times = CreateDisplayTimes(terminals, displaySetting, sign);
 
             if (showEvery.HasValue && (consecutiveTimesToShow == null || consecutiveTimesToShow == 0))
                 displaySetting.ValidUntil = DateTime.MaxValue;
             else
-                displaySetting.ValidUntil = times.Last().EndTime;
+                displaySetting.ValidUntil = times.First().TimeIntervals.Last().EndTime;
 
             return times;
         }
 
-        private List<ScheduledDisplayTime> CreateDisplayTimes(Terminal terminal, DisplaySetting setting, DigitalSign sign)
+        private List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign)
         {
             List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            int nOfDays = (int)Math.Ceiling(setting.DurationSpan.TotalDays);
-            
+            List<TimeInterval> intervals = new List<TimeInterval>();
+        
             //play once
             if ((!setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero) && (setting.ConsecutiveTimesToShow == null || setting.ConsecutiveTimesToShow == 0))
             {
-                times.Add(MapDisplaySettingToDisplayTime(terminal, setting, sign, setting.StartTime, setting.ValidUntil, setting.ShowEvery));
+                intervals.Add(new TimeInterval(){StartTime = setting.StartTime, EndTime = setting.ValidUntil});
             }
             else if (setting.ConsecutiveTimesToShow != null && setting.ConsecutiveTimesToShow != 0)
             {
-                times = CreateSchedule(terminal, setting, sign, setting.ConsecutiveTimesToShow);
+                intervals = CreateSchedule(setting, setting.ConsecutiveTimesToShow);
             }
                 //indefinite play
             else if (setting.ShowEvery.HasValue)
             {
-                times = CreateSchedule(terminal, setting, sign, DataDefinition.RepeatTimes.Month);
+                intervals = CreateSchedule(setting, DataDefinition.RepeatTimes.Month);
+            }
+
+            foreach (var terminal in terminals)
+            {
+                ScheduledDisplayTime sdt = new ScheduledDisplayTime();
+                sdt = MapDisplaySettingToDisplayTime(terminal, setting, sign);
+                sdt.TimeIntervals = intervals;
+                times.Add(sdt);
             }
 
             return times;
         }
 
-        private List<ScheduledDisplayTime> CreateSchedule(Terminal terminal, DisplaySetting setting, DigitalSign sign, int? numberOfEvents)
+        private List<TimeInterval> CreateSchedule(DisplaySetting setting, int? numberOfEvents)
         {
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+            List<TimeInterval> times = new List<TimeInterval>();
             TimeSpan showEvery = !setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero
                 ? TimeSpan.Zero
                 : setting.ShowEvery.Value;
@@ -90,33 +96,30 @@ namespace BL
 
                 DateTime start = startTime.Add(multipliedDuration + multipliedSkippedTime);
                 DateTime end = endTime.Add(multipliedDuration + multipliedSkippedTime);
-                times.Add(MapDisplaySettingToDisplayTime(terminal, setting, sign, start, end, null));
+                times.Add(new TimeInterval(){StartTime = start, EndTime = end});
             }
             return times;
         }
 
-        private ScheduledDisplayTime MapDisplaySettingToDisplayTime(Terminal terminal, DisplaySetting setting, DigitalSign sign, DateTime startTime, DateTime endTime, TimeSpan? indefiniteRun)
+        private ScheduledDisplayTime MapDisplaySettingToDisplayTime(Terminal terminal, DisplaySetting setting, DigitalSign sign)
         {
-            ScheduledDisplayTime time = new ScheduledDisplayTime();            
+            ScheduledDisplayTime time = new ScheduledDisplayTime();
+            time.Name = setting.Name;
             time.Terminal = terminal;
             time.DisplaySetting = setting;
             time.DigitalSign = sign;           
-            time.StartTime = startTime;
-            time.EndTime = endTime;
-            time.IndefiniteRunEvery = indefiniteRun;
             time.Active = true;
-            time.Name = setting.Name;
-
+            
             return time;
         }
 
-        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes, DateTime newTime)
+        public bool IsOverlappingWithExistingDate(List<TimeInterval> scheduledTimes, DateTime newTime)
         {
             return scheduledTimes.Any(t => t.StartTime <= newTime && t.EndTime >= newTime);
         }
 
-        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes,
-            ScheduledDisplayTime newTimeToCheck)
+        public bool IsOverlappingWithExistingDate(List<TimeInterval> scheduledTimes,
+            TimeInterval newTimeToCheck)
         {
             return
                 scheduledTimes.Any(
@@ -126,8 +129,8 @@ namespace BL
                         (t.StartTime > newTimeToCheck.StartTime && t.EndTime < newTimeToCheck.EndTime));
         }
 
-        public bool IsOverlappingWithExistingDate(List<ScheduledDisplayTime> scheduledTimes,
-            List<ScheduledDisplayTime> newTimesToCheck)
+        public bool IsOverlappingWithExistingDate(List<TimeInterval> scheduledTimes,
+            List<TimeInterval> newTimesToCheck)
         {
             foreach (var newTime in newTimesToCheck)
             {
@@ -137,61 +140,44 @@ namespace BL
             return false;
         }
 
-        public string ConvertScheduledTimesToJson(List<ScheduledDisplayTime> times)
+        public string ConvertScheduledTimesToJson(List<TimeInterval> times)
         {
             return JsonConvert.SerializeObject(times);
         }
 
         public ScheduledDisplayTime GetCurrentScheduleForTerminal(Terminal terminal)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.FirstOrDefault(
-                    t => t.Active && 
-                        t.Terminal == terminal && 
-                        t.StartTime <= DateTime.Now && 
-                        t.EndTime >= DateTime.Now);
+            return GetScheduleWrapper(terminal.Id, DateTime.Now);
         }
 
-        public ScheduledDisplayTime GetCurrentScheduleForTerminal(Terminal terminal, DateTime time)
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(Terminal terminal, DateTime targetTime)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.FirstOrDefault(
-                    t => t.Active &&
-                        t.Terminal == terminal &&
-                        t.StartTime <= time &&
-                        t.EndTime >= time);
+            return GetScheduleWrapper(terminal.Id, targetTime);
         }
 
         public ScheduledDisplayTime GetCurrentScheduleForTerminal(int terminalId)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.FirstOrDefault(
-                    t => t.Active &&
-                        t.Terminal.Id == terminalId &&
-                        t.StartTime <= DateTime.Now &&
-                        t.EndTime >= DateTime.Now);
+            return GetScheduleWrapper(terminalId, DateTime.Now);
         }
 
-        public ScheduledDisplayTime GetCurrentScheduleForTerminal(int terminalId, DateTime time)
+        public ScheduledDisplayTime GetCurrentScheduleForTerminal(int terminalId, DateTime targetTime)
         {
-            //TODO ORM
+            return GetScheduleWrapper(terminalId, targetTime);
+        }
+
+        private ScheduledDisplayTime GetScheduleWrapper(int terminalId, DateTime targetTime)
+        {
             List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
 
-            return
-                times.FirstOrDefault(
-                    t => t.Active &&
-                        t.Terminal.Id == terminalId &&
-                        t.StartTime <= time &&
-                        t.EndTime >= time);
+            foreach (var time in times.Where(t => t.Active && t.Terminal.Id == terminalId))
+            {
+                TimeInterval interval = time.TimeIntervals.FirstOrDefault(
+                    i => i.StartTime <= targetTime &&
+                         i.EndTime >= targetTime);
+                if (interval != null) return time;
+            }
+
+            return null;
         }
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(int terminalId)
@@ -206,34 +192,35 @@ namespace BL
                         .ToList();
         }
 
-        public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal, DateTime timeFrom, DateTime timeTo)
+        private List<ScheduledDisplayTime> GetScheduleForTerminalWrapper(int terminalId,
+            DateTime timeFrom,
+            DateTime timeTo)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>().Where(t=> t.Active && t.Terminal.Id == terminalId).ToList();
+            List<ScheduledDisplayTime> foundTimes = new List<ScheduledDisplayTime>();
 
-            return
-                times.Where(
+            foreach (var time in times)
+            {
+                if(time.TimeIntervals.Any(
                     t =>
                         ((t.StartTime <= timeFrom && t.EndTime > timeFrom) ||
                         (t.StartTime < timeTo && t.EndTime >= timeTo) ||
-                        (t.StartTime > timeFrom && t.EndTime < timeTo)) &&
-                        t.Active &&
-                        t.Terminal == terminal).ToList();
+                        (t.StartTime > timeFrom && t.EndTime < timeTo))))
+                    foundTimes.Add(time);
+            }
+
+            return foundTimes;
+
+        }
+
+        public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal, DateTime timeFrom, DateTime timeTo)
+        {
+            return GetScheduleForTerminalWrapper(terminal.Id, timeFrom, timeTo);
         }
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(int terminalId, DateTime timeFrom, DateTime timeTo)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t =>
-                        ((t.StartTime <= timeFrom && t.EndTime > timeFrom) ||
-                        (t.StartTime < timeTo && t.EndTime >= timeTo) ||
-                        (t.StartTime > timeFrom && t.EndTime < timeTo)) &&
-                        t.Active &&
-                        t.Terminal.Id == terminalId).ToList();
+            return GetScheduleForTerminalWrapper(terminalId, timeFrom, timeTo);
         }
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal)

@@ -10,7 +10,7 @@ namespace DAL.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public DigitalSign ActiveSign { get; set; }
+        public virtual DigitalSign ActiveSign { get; set; }
  
     }
 }

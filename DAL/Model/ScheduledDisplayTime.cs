@@ -14,19 +14,21 @@ namespace DAL.Model
         [JsonProperty(PropertyName = "title")]
         public string Name { get; set; }
         [JsonIgnore]
-        public Terminal Terminal { get; set; }
+        public virtual Terminal Terminal { get; set; }
         [JsonIgnore]
-        public DigitalSign DigitalSign { get; set; }
+        public virtual DigitalSign DigitalSign { get; set; }
         [JsonIgnore]
-        public DisplaySetting DisplaySetting { get; set; }
-        [JsonProperty(PropertyName = "start")]
-        public DateTime StartTime { get; set; }
-        [JsonProperty(PropertyName = "end")]
-        public DateTime EndTime { get; set; }
-        [JsonIgnore]
-        public TimeSpan? IndefiniteRunEvery { get; set; }
+        public virtual DisplaySetting DisplaySetting { get; set; }
+        public virtual List<TimeInterval> TimeIntervals { get; set; }
         [JsonIgnore]
         //for shutting down indefinite runs
         public bool Active { get; set; }
+    }
+
+    public class TimeInterval
+    {
+        public int Id { get; set; }
+        public DateTime StartTime { get; set; }
+        public DateTime EndTime { get; set; }
     }
 }
