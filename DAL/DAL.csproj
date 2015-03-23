@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DalDisplaySetting.cs" />
+    <Compile Include="DalScheduledDisplayTime.cs" />
     <Compile Include="DalTerminal.cs" />
     <Compile Include="DBContext.cs" />
     <Compile Include="Model\DataDefinition.cs" />

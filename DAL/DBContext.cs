@@ -17,6 +17,7 @@ namespace DAL
         public DbSet<ScheduledDisplayTime> ScheduledDisplayTimes { get; set; }
         public DbSet<DigitalSign> DigitalSigns { get; set; }
         public DbSet<DisplaySetting> DisplaySettings { get; set; }
+        public DbSet<TimeInterval> TimeIntervals { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

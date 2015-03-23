@@ -16,7 +16,7 @@
 //        public void CreateDisplaySetting_StartTimeBeforeNow_ThrowsException()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            DigitalSign ds = new DigitalSign();
 
 //            manager.CreateDisplayTime(terminal, DateTime.Today.AddDays(-1), TimeSpan.FromDays(1), null, null, ds, "Event");
@@ -27,7 +27,7 @@
 //        public void CreateDisplaySetting_TimeSpanLessThan3Minutes_ThrowsException()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            DigitalSign ds = new DigitalSign();
 
 //            manager.CreateDisplayTime(terminal, DateTime.Today, TimeSpan.FromMinutes(2), null, null, ds, "Event");
@@ -38,7 +38,7 @@
 //        public void CreateDisplaySetting_NoTerminals_ThrowsException()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            DigitalSign ds = new DigitalSign();
 
 //            manager.CreateDisplayTime(null, DateTime.Today, TimeSpan.FromMinutes(10), null, null, ds, "Event");
@@ -49,11 +49,11 @@
 //        public void CreateDisplayTimes_CountNumberOfRecords_Equal()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
-//            ds.StartTime = time;           
+//            ds.StartTime = time;
 //            ds.DurationSpan = TimeSpan.FromHours(2);
 
 //            DigitalSign sign = new DigitalSign();
@@ -69,7 +69,7 @@
 //        public void IsOverlappingWithExistingDate_GetOverlapping_True()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -90,7 +90,7 @@
 //        public void IsOverlappingWithExistingDate_StartOfTheFirstIsEndOfTheSecond_False()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -111,7 +111,7 @@
 //        public void IsOverlappingWithExistingDate_SecondsGoesOneHourAfterStartOfTheFirst_True()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -132,7 +132,7 @@
 //        public void IsOverlappingWithExistingDate_SecondOutsideOfFirst_False()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -153,7 +153,7 @@
 //        public void IsOverlappingWithExistingDate_StartOfTheSecondIsEndOfTheFirst_False()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -174,7 +174,7 @@
 //        public void IsOverlappingWithExistingDate_SecondIsCompletelyOverlappingFirst_True()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -195,7 +195,7 @@
 //        public void IsOverlappingWithExistingDate_SecondIsCompletelyInsideFirst_True()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -216,7 +216,7 @@
 //        public void IsOverlappingWithExistingDate_SecondIsCompletelyInsideFirst2_True()
 //        {
 //            var manager = new DisplaySettingsManager();
-//            var terminal = new Terminal(){Name="prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            var time = DateTime.Now;
 
 //            DisplaySetting ds = new DisplaySetting();
@@ -280,7 +280,7 @@
 //        public void TestDBConnection()
 //        {
 //            DBContext dbContext = new DBContext();
-//            var terminal = new Terminal() {Name = "prvi terminal"};
+//            var terminal = new Terminal() { Name = "prvi terminal" };
 //            dbContext.Terminals.Add(terminal);
 //            dbContext.SaveChanges();
 //            Assert.AreEqual(1, 1);
