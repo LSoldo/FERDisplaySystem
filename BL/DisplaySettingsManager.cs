@@ -7,8 +7,14 @@ using Newtonsoft.Json;
 
 namespace BL
 {
-    public class DisplaySettingsManager
+    public class DisplaySettingsManager:IDisposable
     {
+        private DalScheduledDisplayTime dalSDT;
+
+        public DisplaySettingsManager()
+        {
+            this.dalSDT = new DalScheduledDisplayTime();
+        }
         public List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals,
             DateTime startTime,
             TimeSpan durationSpan,
@@ -45,7 +51,17 @@ namespace BL
             else
                 displaySetting.ValidUntil = times.First().TimeIntervals.Last().EndTime;
 
-            return times;
+            try
+            {
+                foreach (var time in times)
+                    dalSDT.Add(time);
+                return times;
+            }
+            catch (Exception)
+            {
+                throw new Exception(
+                    "DisplaySettingsManager: CreateDisplayTimes: Error while inserting scheduled display times");
+            }
         }
 
         private List<ScheduledDisplayTime> CreateDisplayTimes(List<Terminal> terminals, DisplaySetting setting, DigitalSign sign)
@@ -167,37 +183,29 @@ namespace BL
 
         private ScheduledDisplayTime GetScheduleWrapper(int terminalId, DateTime targetTime)
         {
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+            List<ScheduledDisplayTime> times = GetScheduleForTerminal(terminalId);
 
-            foreach (var time in times.Where(t => t.Active && t.Terminal.Id == terminalId))
+            foreach (var time in times)
             {
                 TimeInterval interval = time.TimeIntervals.FirstOrDefault(
                     i => i.StartTime <= targetTime &&
                          i.EndTime >= targetTime);
                 if (interval != null) return time;
             }
-
             return null;
         }
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(int terminalId)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t => t.Active &&
-                        t.Terminal.Id == terminalId)
-                        .ToList();
+            return dalSDT.FetchByTerminalActive(terminalId);
         }
 
         private List<ScheduledDisplayTime> GetScheduleForTerminalWrapper(int terminalId,
             DateTime timeFrom,
             DateTime timeTo)
         {
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>().Where(t=> t.Active && t.Terminal.Id == terminalId).ToList();
             List<ScheduledDisplayTime> foundTimes = new List<ScheduledDisplayTime>();
+            List<ScheduledDisplayTime> times = GetScheduleForTerminal(terminalId);
 
             foreach (var time in times)
             {
@@ -210,7 +218,6 @@ namespace BL
             }
 
             return foundTimes;
-
         }
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal, DateTime timeFrom, DateTime timeTo)
@@ -225,58 +232,33 @@ namespace BL
 
         public List<ScheduledDisplayTime> GetScheduleForTerminal(Terminal terminal)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t => t.Active &&
-                        t.Terminal == terminal)
-                        .ToList();
+            return GetScheduleForTerminal(terminal.Id);
         }
 
         public List<ScheduledDisplayTime> GetEntireHistoryForTerminal(Terminal terminal)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t => t.Terminal == terminal)
-                    .ToList();
+            return dalSDT.FetchByTerminal(terminal.Id);
         }
 
         public List<ScheduledDisplayTime> GetEntireHistoryForTerminal(int terminalId)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t => t.Terminal.Id == terminalId)
-                    .ToList();
+            return dalSDT.FetchByTerminal(terminalId);
         }
 
         public List<ScheduledDisplayTime> GetInactiveScheduleForTerminal(Terminal terminal)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
-
-            return
-                times.Where(
-                    t => !t.Active && t.Terminal == terminal)
-                    .ToList();
+            return dalSDT.FetchByTerminalInactive(terminal.Id);
         }
 
         public List<ScheduledDisplayTime> GetInactiveScheduleForTerminal(int terminalId)
         {
-            //TODO ORM
-            List<ScheduledDisplayTime> times = new List<ScheduledDisplayTime>();
+            return dalSDT.FetchByTerminalInactive(terminalId);
+        }
 
-            return
-                times.Where(
-                    t => !t.Active && t.Terminal.Id == terminalId)
-                    .ToList();
+        public void Dispose()
+        {
+            if(dalSDT != null)
+                dalSDT.Dispose();
         }
 
 

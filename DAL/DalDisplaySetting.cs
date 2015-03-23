@@ -7,7 +7,7 @@ using DAL.Model;
 
 namespace DAL
 {
-    public class DalDisplaySetting
+    public class DalDisplaySetting : IDisposable
     {
         private DBContext context;
 
