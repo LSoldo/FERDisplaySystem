@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using DAL.Interfaces;
 using DAL.Utils;
 using Newtonsoft.Json.Linq;
@@ -46,7 +47,7 @@ namespace DAL.Model
                 var headContent = builder.BuildHeadContent(this.Css, this.Js);
 
                 var bodyContent = BuildBodyContent(this.JavascriptFunctions,
-                    this.Scenes.Select(s => s.Scene.HtmlContent).ToList(),
+                    this.Scenes.Select(s => s.Scene.HtmlContent.Replace(Environment.NewLine, "")).ToList(),
                     this.Scenes.Select(s => s.Scene.JavascriptFunctions).ToList(),
                     this.Scenes.Select(scene => (long)scene.Duration.TotalMilliseconds).ToList() );
 
@@ -64,8 +65,11 @@ namespace DAL.Model
 
             var content =
                 builder.BuildVarArray(
-                    string.Join("," + Environment.NewLine, htmlDefinitionsForScenes.ConvertAll(i => "'" + i + "'")),
+                    string.Join(",", htmlDefinitionsForScenes.ConvertAll(i => "'" + i + "'")),
                     DataDefinition.SequenceDefinition.Content);
+
+            //setting interval to max value so the page won't refresh very often
+            if (sceneIntervals.Count == 1) sceneIntervals[0] = long.MaxValue;
             var intervals = builder.BuildVarArray(sceneIntervals.Select(i => i.ToString()).ToList(),
                 DataDefinition.SequenceDefinition.Intervals);
 

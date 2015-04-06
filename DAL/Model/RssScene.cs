@@ -28,7 +28,6 @@ namespace DAL.Model
         public void Init(string name,
             string description,
             List<string> urls,
-            TimeSpan duration,
             bool isCacheable
             )
         {
@@ -63,19 +62,26 @@ namespace DAL.Model
                 this.Css = builder.AddCss((definition.rssscene.css).ToObject<List<string>>());
                 this.Js = builder.AddJs((definition.rssscene.js).ToObject<List<string>>());
 
-                XmlReader reader = XmlReader.Create(this.Urls.FirstOrDefault());
-                SyndicationFeed feed = SyndicationFeed.Load(reader);
+                var reader = XmlReader.Create(this.Urls.FirstOrDefault());
+                var feed = SyndicationFeed.Load(reader);
                 reader.Close();
-                string rssContent = "";
-                int i = 0;
-                foreach (SyndicationItem item in feed.Items)
+
+                if (feed != null)
                 {
-                    String subject = item.Title.Text;
-                    rssContent += builder.AddDivWithId(item.Summary.Text.Replace("\n", "").Replace("&nbsp", "&#160"),
-                        DataDefinition.SequenceDefinition.RssSequenceDivId + i);
-                    i++;
+                    var rssContent = "";
+                    var i = 0;
+                    foreach (var item in feed.Items)
+                    {
+                        var subject = item.Title.Text;
+                        rssContent += builder.AddDivWithId(
+                            item.Summary.Text.Replace("\n", "").Replace("&nbsp", "&#160"),
+                            DataDefinition.SequenceDefinition.RssSequenceDivId + i);
+                        i++;
+                    }
+                    this.HtmlContent = string.Format(this.HtmlContent, rssContent);
                 }
-                this.HtmlContent = string.Format(this.HtmlContent, rssContent);
+                else
+                    throw new Exception("RSS feed not available");
             }
         }
     }

@@ -23,7 +23,7 @@ namespace DAL.Model
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
 
-        public void Init(string name, string description, List<string> urls, TimeSpan duration, bool isCacheable)
+        public void Init(string name, string description, List<string> urls, bool isCacheable)
         {
             this.Name = name;
             this.Description = description;

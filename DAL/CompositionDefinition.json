@@ -3,13 +3,13 @@
         "html": [
         ],
 		"css": [
-			"../lib/css/jquery.maximage.css?v=1.2"
+			"http://localhost:11527/Content/jquery.maximage.css?v=1.2"
 		],
 		"js": [
             "http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.js",
             "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js",
-            "../lib/js/jquery.cycle.all.js",
-            "../lib/js/jquery.maximage.js"
+            "http://localhost:11527/Scripts/jquery.cycle.all.js",
+            "http://localhost:11527/Scripts/jquery.maximage.js"
 		],
 		"javascriptFunctions": [
             "var msgPtr = 0;",

@@ -56,12 +56,12 @@ namespace DAL.Model
 
         public abstract class SceneDefinition
         {
-            public static string Path = "../../SceneDefinition.json";
+            public static string Path = @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\SceneDefinition.json";
         }
 
         public abstract class SequenceDefinition
         {
-            public static string Path = "../../CompositionDefinition.json";
+            public static string Path = @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\CompositionDefinition.json";
             public static string Intervals = "intervals";
             public static string Content = "content";
             public static string CurrentFunctions = "currentFunctions";

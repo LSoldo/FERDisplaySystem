@@ -9,7 +9,7 @@ using DAL.Utils;
 using Newtonsoft.Json.Linq;
 namespace DAL.Model
 {
-    public class ImageSlideshow : IScene
+    public class ImageSlideshowScene : IScene
     {
         public int Id { get; set; }
         public string Type { get; private set; }
@@ -22,7 +22,7 @@ namespace DAL.Model
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
 
-        public void Init(string name, string description, List<string> urls, TimeSpan duration, bool isCacheable)
+        public void Init(string name, string description, List<string> urls, bool isCacheable)
         {
             this.Name = name;
             this.Description = description;
@@ -45,8 +45,8 @@ namespace DAL.Model
             using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
             {
                 ClearData();
-                PageBuilder builder = new PageBuilder();
-                string json = r.ReadToEnd();
+                var builder = new PageBuilder();
+                var json = r.ReadToEnd();
                 dynamic definition = JObject.Parse(json);
                 this.HtmlContent = string.Format(
                     string.Join(Environment.NewLine, definition.imageslideshow.html),

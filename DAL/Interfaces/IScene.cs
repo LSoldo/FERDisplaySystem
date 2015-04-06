@@ -23,7 +23,7 @@ namespace DAL.Interfaces
         List<string> Js { get; set; } 
         string JavascriptFunctions { get; }
         bool IsCacheable { get; }
-        void Init(string name, string description, List<string> urls, TimeSpan duration, bool isCacheable);
+        void Init(string name, string description, List<string> urls, bool isCacheable);
         void Calculate();
     }
 }

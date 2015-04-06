@@ -48,8 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\ClockScene.cs" />
     <Compile Include="Model\Html5VideoScene.cs" />
-    <Compile Include="Model\ImageSlideshow.cs" />
+    <Compile Include="Model\ImageSlideshowScene.cs" />
     <Compile Include="Interfaces\IScene.cs" />
     <Compile Include="Interfaces\ISceneFactory.cs" />
     <Compile Include="Interfaces\ISequence.cs" />

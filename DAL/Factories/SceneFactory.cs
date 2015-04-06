@@ -15,9 +15,11 @@ namespace DAL.Factories
             if(type == DataDefinition.SceneType.Video)
                 return new Html5VideoScene();
             else if(type == DataDefinition.SceneType.Slideshow)
-                return new ImageSlideshow();
+                return new ImageSlideshowScene();
             else if(type == DataDefinition.SceneType.Rss)
                 return new RssScene();
+            else if (type == DataDefinition.SceneType.Clock)
+                return new ClockScene();
             else
                 throw new ArgumentException("SceneFactory: Scene type argument not valid: {0}", type);
         }
