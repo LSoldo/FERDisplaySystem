@@ -13,9 +13,9 @@ namespace DAL.Model
         public string Name { get; set; }
         public string Type { get; set; }
         public TerminalSequence CurrentSequence { get; set; }
-        public List<TerminalSequence> AllSequences { get; set; }
         public TerminalSequence ManualSequence { get; set; }
         public TerminalSequence DefaultSequence { get; set; }
+        public List<TerminalSequence> AllSequences { get; set; }
         public DateTime CurrentSequenceFrom { get; set; }
         public DateTime CurrentSequenceTo { get; set; }
  

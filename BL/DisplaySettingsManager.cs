@@ -76,9 +76,9 @@ namespace BL
             {
                 intervals.Add(new TimeInterval() {TimeFrom = setting.StartTime, TimeTo = setting.ValidUntil});
             }
-            else if (setting.ConsecutiveTimesToShow != null && setting.ConsecutiveTimesToShow != 0)
+            else if (setting.ConsecutiveTimesToShow.HasValue && setting.ConsecutiveTimesToShow.Value != 0)
             {
-                intervals = CreateSchedule(setting, setting.ConsecutiveTimesToShow);
+                intervals = CreateSchedule(setting, setting.ConsecutiveTimesToShow.Value);
             }
             //indefinite play
             else if (setting.ShowEvery.HasValue)
@@ -89,7 +89,7 @@ namespace BL
             return intervals;
         }
 
-        private static List<TimeInterval> CreateSchedule(DisplaySetting setting, int? numberOfEvents)
+        private static List<TimeInterval> CreateSchedule(DisplaySetting setting, int numberOfEvents)
         {
             var times = new List<TimeInterval>();
             var showEvery = !setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero
