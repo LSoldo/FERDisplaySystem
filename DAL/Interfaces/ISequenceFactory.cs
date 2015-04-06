@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.Model
+namespace DAL.Interfaces
 {
-    public class Terminal
+    public interface ISequenceFactory
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
- 
+        ISequence GetSequence(string type);
     }
 }

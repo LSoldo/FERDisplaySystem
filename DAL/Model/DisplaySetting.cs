@@ -10,8 +10,7 @@ namespace DAL.Model
     {
         //public string DisplayPeriod { get; set; }
         public int Id { get; set; }
-        public string Name { get; set; }
-        public DateTime InsertionTS { get; set; }
+        public DateTime InsertionTs { get; set; }
         public DateTime StartTime { get; set; }
         public TimeSpan DurationSpan { get; set; }
         public DateTime ValidUntil { get; set; }

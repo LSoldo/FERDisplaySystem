@@ -58,8 +58,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="DatabaseAccessTest.cs" />
-    <Compile Include="DisplaySettingsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

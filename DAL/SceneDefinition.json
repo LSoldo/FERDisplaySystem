@@ -1,0 +1,75 @@
+﻿{
+    "html5videoscene": {
+        "html": [
+            "<video id=\"video\" autoplay=\"autoplay\" loop=\"loop\" autobuffer=\"autobuffer\" muted=\"muted\" width=\"640\" height=\"360\">",
+            "<source src=\"{0}\" type=\"video/mp4\" />",
+            "<object type=\"application/x-shockwave-flash\" data=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" width=\"640\" height=\"360\">",
+            "<param name=\"movie\" value=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" />",
+            "<param name=\"allowFullScreen\" value=\"true\" />",
+            "<param name=\"wmode\" value=\"transparent\" />",
+            "</object>",
+            "</video>"
+        ],
+		"css": [
+		],
+        "cssDefinition": [
+            "<style type=\"text/css\" media=\"screen\">",
+			"html {overflow-x:hidden;}",
+			"body {font-family:arial;margin:0;padding:0;}",
+			"video, object {",
+				"top:0;left:0;",
+				"position:absolute;",
+			"}",			
+		"</style>"
+        ],
+		"js": [
+		],
+		"javascriptFunctions": [
+			"jQuery('video, object').maximage('maxcover');"
+		]
+    },
+    "imageslideshow": {
+        "html": [
+            "<div id=\"maximage\">",
+            "{0}",
+			"</div>"
+        ],
+        "css": [
+		],
+		"js": [
+		],
+		"javascriptFunctions": [
+			"jQuery('#maximage').maximage(",
+					"{",
+						"cycleOptions: {",
+							"startingSlide: localStorage.getItem(\"CurrentSlide\") == null ? 0 : localStorage.getItem(\"CurrentSlide\"),",
+							"before: function (curr, next, opts) {",
+											"if($('#maximage').data(\"cycle.opts\") != undefined )",
+											"{",
+												"localStorage.setItem(\"CurrentSlide\", $('#maximage').data(\"cycle.opts\").currSlide);",
+											"}}}})"
+		]
+    },
+
+    "rssscene": {
+        "html": [
+            "<div id=\"maximage\">",
+            "{0}",
+			"</div>"
+        ],
+        "css": [
+		],
+		"js": [
+		],
+		"javascriptFunctions": [
+            "var divs = $('div[id^=\"content-\"]').hide(),",
+                "i = 0;",
+                "(function cycle() {", 
+                    "divs.eq(i).fadeIn(400)",
+                        ".delay(5000)",
+                        ".fadeOut(400, cycle);",
+                     "i = ++i % divs.length;", 
+                     "})();"
+		]
+    }
+}

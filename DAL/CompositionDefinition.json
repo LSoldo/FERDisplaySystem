@@ -1,0 +1,33 @@
+﻿{
+"maximage": {
+        "html": [
+        ],
+		"css": [
+			"../lib/css/jquery.maximage.css?v=1.2"
+		],
+		"js": [
+            "http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.js",
+            "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js",
+            "../lib/js/jquery.cycle.all.js",
+            "../lib/js/jquery.maximage.js"
+		],
+		"javascriptFunctions": [
+            "var msgPtr = 0;",
+				"var stopAction = null;",
+				"function change() {{",
+					"if(stopAction != null)",
+					"{{",
+						"clearInterval(stopAction);",
+					"}}",					
+					"var newMsg = content[msgPtr];",		  			 
+					"document.getElementById(\"{0}\").innerHTML = newMsg;",					
+					"currentFunctions[msgPtr].forEach(function(backFoo) {{",
+						"backFoo();",
+					"}});",
+					"stopAction = setInterval(change, intervals[msgPtr]);",
+					"msgPtr++; msgPtr = (msgPtr % content.length);",
+				"}}",
+				"change();" 		
+		]
+    }
+}
