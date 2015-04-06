@@ -13,8 +13,27 @@ namespace BL
             DateTime startTime,
             DateTime endTime,
             TimeSpan? showEvery,
-            int? consecutiveTimesToShow
+            int? consecutiveTimesToShow,
+            out DisplaySetting setting
             )
+        {
+            setting = CreateDisplaySetting(startTime, endTime, showEvery, consecutiveTimesToShow);
+            var times = CreateDisplayTimes(setting);
+            if (times == null) 
+                throw new ArgumentNullException("times");
+            CalculateDisplaySettingAdditionalValues(ref setting, times);
+            return times;
+        }
+
+        public void CalculateDisplaySettingAdditionalValues(ref DisplaySetting setting, List<TimeInterval> times)
+        {
+            if (setting.ShowEvery.HasValue && (setting.ConsecutiveTimesToShow == null || setting.ConsecutiveTimesToShow == 0))
+                setting.ValidUntil = DateTime.MaxValue;
+            else
+                setting.ValidUntil = times.Last().TimeTo;
+        }
+
+        private static void CheckTimeRules(DateTime startTime, DateTime endTime)
         {
             if (startTime == null || startTime < DateTime.Today)
                 throw new Exception("Start time should be equal or later than now");
@@ -24,10 +43,20 @@ namespace BL
 
             if (endTime < startTime || endTime.Equals(startTime))
                 throw new Exception("End time must be later than start time");
+        }
+
+        public DisplaySetting CreateDisplaySetting(
+            DateTime startTime,
+            DateTime endTime,
+            TimeSpan? showEvery,
+            int? consecutiveTimesToShow
+            )
+        {
+            CheckTimeRules(startTime, endTime);
 
             var durationSpan = endTime - startTime;
 
-            var displaySetting = new DisplaySetting
+            return new DisplaySetting
             {
                 InsertionTs = DateTime.Now,
                 StartTime = startTime,
@@ -35,18 +64,9 @@ namespace BL
                 ConsecutiveTimesToShow = consecutiveTimesToShow,
                 DurationSpan = durationSpan
             };
-
-            var times = CreateDisplayTimes(displaySetting);
-
-            if (showEvery.HasValue && (consecutiveTimesToShow == null || consecutiveTimesToShow == 0))
-                displaySetting.ValidUntil = DateTime.MaxValue;
-            else
-                displaySetting.ValidUntil = times.Last().TimeTo;
-
-            return times;
         }
 
-        public List<TimeInterval> CreateDisplayTimes(DisplaySetting setting)
+        private static List<TimeInterval> CreateDisplayTimes(DisplaySetting setting)
         {
             var intervals = new List<TimeInterval>();
 
@@ -69,7 +89,7 @@ namespace BL
             return intervals;
         }
 
-        public List<TimeInterval> CreateSchedule(DisplaySetting setting, int? numberOfEvents)
+        private static List<TimeInterval> CreateSchedule(DisplaySetting setting, int? numberOfEvents)
         {
             var times = new List<TimeInterval>();
             var showEvery = !setting.ShowEvery.HasValue || setting.ShowEvery.Value == TimeSpan.Zero
@@ -78,7 +98,7 @@ namespace BL
 
             DateTime startTime = setting.StartTime;
             DateTime endTime = setting.StartTime.Add(setting.DurationSpan);
-            for (int i = 0; i < numberOfEvents; i++)
+            for (var i = 0; i < numberOfEvents; i++)
             {
                 var multipliedSkippedTime = TimeSpan.FromTicks(i * showEvery.Ticks);
                 var multipliedDuration = TimeSpan.FromTicks(i * setting.DurationSpan.Ticks);
