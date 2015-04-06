@@ -17,15 +17,13 @@ namespace DAL.Interfaces
         string Type { get; }
         string Name { get; set; }
         string Description { get; set; }
-        List<string> URLs { get; set; }
-        TimeSpan Duration { get; set; }
+        List<string> Urls { get; set; }
         string HtmlContent { get; }
         List<string> Css { get; set; }
         List<string> Js { get; set; } 
         string JavascriptFunctions { get; }
         bool IsCacheable { get; }
-        bool ShouldCleanCache { get; set; } 
-        void Init(string name, string description, List<string> urls, TimeSpan duration, bool isCacheable, bool shouldCleanCache);
+        void Init(string name, string description, List<string> urls, TimeSpan duration, bool isCacheable);
         void Calculate();
     }
 }

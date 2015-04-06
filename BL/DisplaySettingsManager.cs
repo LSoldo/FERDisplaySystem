@@ -25,9 +25,9 @@ namespace BL
             if (endTime < startTime || endTime.Equals(startTime))
                 throw new Exception("End time must be later than start time");
 
-            TimeSpan durationSpan = endTime - startTime;
+            var durationSpan = endTime - startTime;
 
-            DisplaySetting displaySetting = new DisplaySetting
+            var displaySetting = new DisplaySetting
             {
                 InsertionTs = DateTime.Now,
                 StartTime = startTime,
@@ -116,93 +116,6 @@ namespace BL
         public string ConvertScheduledTimesToJson(List<TimeInterval> times)
         {
             return JsonConvert.SerializeObject(times);
-        }
-
-        public ISequence GetCurrentScheduleForTerminal(Terminal terminal)
-        {
-            return GetCurrentSchedule(terminal.Id, DateTime.Now);
-        }
-
-        public ISequence GetCurrentScheduleForTerminal(Terminal terminal, DateTime targetTime)
-        {
-            return GetCurrentSchedule(terminal.Id, targetTime);
-        }
-
-        public ISequence GetCurrentScheduleForTerminal(int terminalId)
-        {
-            return GetCurrentSchedule(terminalId, DateTime.Now);
-        }
-
-        public ISequence GetCurrentScheduleForTerminal(int terminalId, DateTime targetTime)
-        {
-            return GetCurrentSchedule(terminalId, targetTime);
-        }
-
-        private ISequence GetCurrentSchedule(int terminalId, DateTime targetTime)
-        {
-            var times = GetScheduleForTerminal(terminalId);
-
-            return (from time in times
-                let interval =
-                    time.TimeIntervals.FirstOrDefault(i => i.TimeFrom <= targetTime && i.TimeTo >= targetTime)
-                where interval != null
-                select time).FirstOrDefault();
-        }
-
-        public List<ISequence> GetScheduleForTerminal(int terminalId)
-        {
-            return null;
-        }
-
-        private List<ISequence> GetSchedule(int terminalId,
-            DateTime timeFrom,
-            DateTime timeTo)
-        {
-            var times = GetScheduleForTerminal(terminalId);
-
-            return
-                times.Where(
-                    time =>
-                        time.TimeIntervals.Any(
-                            t =>
-                                ((t.TimeFrom <= timeFrom && t.TimeTo > timeFrom) ||
-                                 (t.TimeFrom < timeTo && t.TimeTo >= timeTo) ||
-                                 (t.TimeFrom > timeFrom && t.TimeTo < timeTo)))).ToList();
-        }
-
-        public List<ISequence> GetScheduleForTerminal(Terminal terminal, DateTime timeFrom, DateTime timeTo)
-        {
-            return GetSchedule(terminal.Id, timeFrom, timeTo);
-        }
-
-        public List<ISequence> GetScheduleForTerminal(int terminalId, DateTime timeFrom, DateTime timeTo)
-        {
-            return GetSchedule(terminalId, timeFrom, timeTo);
-        }
-
-        public List<ISequence> GetScheduleForTerminal(Terminal terminal)
-        {
-            return GetScheduleForTerminal(terminal.Id);
-        }
-
-        public List<ISequence> GetEntireHistoryForTerminal(Terminal terminal)
-        {
-            return null;
-        }
-
-        public List<ISequence> GetEntireHistoryForTerminal(int terminalId)
-        {
-            return null;
-        }
-
-        public List<ISequence> GetInactiveScheduleForTerminal(Terminal terminal)
-        {
-            return null;
-        }
-
-        public List<ISequence> GetInactiveScheduleForTerminal(int terminalId)
-        {
-            return null;
         }
 
     }

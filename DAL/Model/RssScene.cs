@@ -18,28 +18,24 @@ namespace DAL.Model
         public string Type { get; private set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<string> URLs { get; set; }
-        public TimeSpan Duration { get; set; }
+        public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
         public string JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
-        public bool ShouldCleanCache { get; set; }
 
         public void Init(string name,
             string description,
             List<string> urls,
             TimeSpan duration,
-            bool isCacheable,
-            bool shouldCleanCache)
+            bool isCacheable
+            )
         {
             this.Name = name;
             this.Description = description;
-            this.URLs = urls;
-            this.Duration = duration;
+            this.Urls = urls;
             this.IsCacheable = isCacheable;
-            this.ShouldCleanCache = shouldCleanCache;
             this.Type = DataDefinition.SceneType.Rss;
 
             Calculate();
@@ -55,7 +51,7 @@ namespace DAL.Model
 
         public void Calculate()
         {
-            using (StreamReader r = new StreamReader(DataDefinition.SceneDefinition.Path))
+            using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
             {
                 ClearData();
                 PageBuilder builder = new PageBuilder();
@@ -67,7 +63,7 @@ namespace DAL.Model
                 this.Css = builder.AddCss((definition.rssscene.css).ToObject<List<string>>());
                 this.Js = builder.AddJs((definition.rssscene.js).ToObject<List<string>>());
 
-                XmlReader reader = XmlReader.Create(this.URLs.FirstOrDefault());
+                XmlReader reader = XmlReader.Create(this.Urls.FirstOrDefault());
                 SyndicationFeed feed = SyndicationFeed.Load(reader);
                 reader.Close();
                 string rssContent = "";

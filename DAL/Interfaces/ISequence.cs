@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.Model;
 using Newtonsoft.Json.Linq;
 
 namespace DAL.Interfaces
@@ -25,11 +26,10 @@ namespace DAL.Interfaces
         List<string> Js { get; }
         string JavascriptFunctions { get; }
         string Type { get; }
-        List<IScene> Scenes { get; set; }
-        List<TimeInterval> TimeIntervals { get; set; }
+        List<SequenceScene> Scenes { get; set; }
         void Calculate();
-        void Add(IScene scene);
-        void Init(string name, string description, List<IScene> scenes);
+        void Add(SequenceScene scene);
+        void Init(string name, string description, List<SequenceScene> scenes);
     }
 
 }

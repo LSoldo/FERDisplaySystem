@@ -22,6 +22,11 @@ namespace DAL.Model
             public static string NTimes = "NT";
         }
 
+        public abstract class Resolution
+        {
+            public static string Standard = "Std";
+        }
+
         public abstract class RepeatTimes
         {
             public static int Once = 1;
