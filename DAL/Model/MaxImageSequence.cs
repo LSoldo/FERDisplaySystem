@@ -69,7 +69,7 @@ namespace DAL.Model
                     DataDefinition.SequenceDefinition.Content);
 
             //setting interval to max value so the page won't refresh very often
-            if (sceneIntervals.Count == 1) sceneIntervals[0] = long.MaxValue;
+            if (sceneIntervals.Count == 1) sceneIntervals[0] = DataDefinition.Duration.ThirtySeconds;
             var intervals = builder.BuildVarArray(sceneIntervals.Select(i => i.ToString()).ToList(),
                 DataDefinition.SequenceDefinition.Intervals);
 

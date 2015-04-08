@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BL;
+using DAL;
 using DAL.Factories;
 using DAL.Interfaces;
 using DAL.Model;
+using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -33,13 +35,13 @@ namespace Web.Controllers
 
         public ActionResult Terminal()
         {
-            SceneFactory sceneFactory = new SceneFactory();
-            SequenceFactory sequenceFactory = new SequenceFactory();
+            var sceneFactory = new SceneFactory();
+            var sequenceFactory = new SequenceFactory();
 
-            IScene rss = sceneFactory.GetScene(DataDefinition.SceneType.Clock);
+            var rss = sceneFactory.GetScene(DataDefinition.SceneType.Clock);
             rss.Init("ime", "opis", new List<string>() { "" }, true);
 
-            IScene video = sceneFactory.GetScene(DataDefinition.SceneType.Video);
+            var video = sceneFactory.GetScene(DataDefinition.SceneType.Video);
             video.Init("ime", "opis", new List<string>() { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" }, true);
 
             var sequenceScene = new List<SequenceScene>
@@ -51,6 +53,18 @@ namespace Web.Controllers
             sequence.Init("Sekvenca", "opis", sequenceScene);
 
             return Content(sequence.HtmlContent);
+        }
+
+        public ActionResult Calendar()
+        {
+            var manager = new DisplaySettingsManager();
+            DisplaySetting setting;
+            var data = manager.CreateDisplayTimes(DateTime.Now, DateTime.Now.AddHours(2), TimeSpan.FromHours(3), 5,
+                out setting);
+
+            ViewBag.CalendarEvents = from d in data
+                                     select new { start = d.TimeFrom, end = d.TimeTo, title = "Name" };
+            return View();
         }
     }
 }

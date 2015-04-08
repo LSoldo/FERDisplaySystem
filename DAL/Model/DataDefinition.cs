@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DAL.Utils;
 
 namespace DAL.Model
 {
@@ -38,6 +40,11 @@ namespace DAL.Model
             public static int Year = 365;
         }
 
+        public abstract class Duration
+        {
+            public static long ThirtySeconds = 30000;
+        }
+
         public abstract class SceneType
         {
             public static string Rss = "RSS";
@@ -56,12 +63,27 @@ namespace DAL.Model
 
         public abstract class SceneDefinition
         {
-            public static string Path = @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\SceneDefinition.json";
+            public static string Path
+            {
+                get
+                {
+                    return
+                        @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\SceneDefinition.json";
+                }
+            }
         }
 
         public abstract class SequenceDefinition
         {
-            public static string Path = @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\CompositionDefinition.json";
+            public static string Path
+            {
+                get
+                {
+                    return
+                        @"C:\Users\Luka\Documents\Visual Studio 2013\Projects\FERDisplaySystem\DAL\CompositionDefinition.json";
+                }
+            }
+
             public static string Intervals = "intervals";
             public static string Content = "content";
             public static string CurrentFunctions = "currentFunctions";

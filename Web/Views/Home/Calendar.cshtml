@@ -1,0 +1,87 @@
+﻿@using System.Web.Helpers
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Calendar</title>
+    <link rel="stylesheet" href="~/Content/fullcalendar.css" />
+    <link rel="stylesheet" href="~/Content/jquery-ui.theme.min.css" />
+    <link rel="stylesheet" href="~/Content/jquery-ui.structure.min.css" />
+    <link rel="stylesheet" href="~/Content/jquery-ui.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css" />
+
+    <script src="~/Scripts/jquery-1.10.2.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/jquery-ui.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/moment.min.js" type="text/javascript"></script>
+    <script src="~/Scripts/fullcalendar.js" type="text/javascript"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js" ></script>
+
+    <script type="text/javascript" charset="utf-8">
+        var userInfo = @Html.Raw(Json.Encode(ViewBag.CalendarEvents));
+    $(function () {
+        $("#calendar").fullCalendar({
+            theme: false,
+            header: {
+                left: "prev,next, today",
+                center: "title",
+                right: "month,agendaWeek,agendaDay"
+            },
+            events: userInfo,
+            timeFormat: "H(:mm)",
+            eventClick: function (calEvent, jsEvent, view) {
+                $("#title").html(calEvent.title);
+                $("#from").html("From: " + calEvent.start.format("dddd, MMMM Do YYYY, H:mm:ss"));
+                $("#to").html("To: " + calEvent.end.format("dddd, MMMM Do YYYY, H:mm:ss"));
+                $("#myModal").modal();
+            }
+        });
+    });
+
+    </script>
+    <style>
+        body {
+            margin: 40px 10px;
+            padding: 0;
+            font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+            font-size: 14px;
+        }
+
+        #calendar {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+    </style>
+
+</head>
+<body>
+    <div id="calendar"></div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: #7092BE; color: white">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="title">
+                        <span class="glyphicon glyphicon-time" style="font-size:24px;" aria-hidden="true"></span>&nbsp
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info" role="alert"> <span id="from"></span></div>
+                    <div class="alert alert-info" role="alert"> <span id="to"></span></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+</html>
