@@ -21,7 +21,7 @@ namespace DAL.Model
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
-
+        public bool IsInitialized { get; private set; }
         public void Init(string name, string description, List<string> urls, bool isCacheable)
         {
             this.Name = name;
@@ -29,6 +29,7 @@ namespace DAL.Model
             this.Urls = urls;
             this.IsCacheable = isCacheable;
             this.Type = DataDefinition.SceneType.Slideshow;
+            this.IsInitialized = true;
 
             Calculate();
         }
@@ -42,23 +43,31 @@ namespace DAL.Model
         }
         public void Calculate()
         {
-            using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
+            try
             {
-                ClearData();
-                var builder = new PageBuilder();
-                var json = r.ReadToEnd();
-                dynamic definition = JObject.Parse(json);
-                this.HtmlContent = string.Format(
-                    string.Join(Environment.NewLine, definition.imageslideshow.html),
-                    string.Join(Environment.NewLine, builder.AddImg(this.Urls))
-                    );
+                using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
+                {
+                    ClearData();
+                    var builder = new PageBuilder();
+                    var json = r.ReadToEnd();
+                    dynamic definition = JObject.Parse(json);
+                    this.HtmlContent = string.Format(
+                        string.Join("", definition.imageslideshow.html),
+                        string.Join("", builder.AddImg(this.Urls))
+                        );
 
-                this.JavascriptFunctions = string.Join(Environment.NewLine,
-                    definition.imageslideshow.javascriptFunctions);
+                    this.JavascriptFunctions = string.Join(Environment.NewLine,
+                        definition.imageslideshow.javascriptFunctions);
 
-                this.Css = builder.AddCss((definition.imageslideshow.css).ToObject<List<string>>());
-                this.Js = builder.AddJs((definition.imageslideshow.js).ToObject<List<string>>());
+                    this.Css = (definition.imageslideshow.css).ToObject<List<string>>();
+                    this.Js = (definition.imageslideshow.js).ToObject<List<string>>();
+                }
             }
+            catch (Exception ex)
+            {  
+                throw new Exception("Exception occured: " + ex.Message);
+            }
+            
         }
     }
 }

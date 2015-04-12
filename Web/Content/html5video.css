@@ -1,0 +1,17 @@
+﻿@media screen {
+    html {
+        overflow-x: hidden;
+    }
+
+    body {
+        font-family: arial;
+        margin: 0;
+        padding: 0;
+    }
+
+    video, object {
+        top: 0;
+        left: 0;
+        position: absolute;
+    }
+}

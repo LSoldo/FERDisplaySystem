@@ -24,6 +24,7 @@ namespace DAL.Model
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
+        public bool IsInitialized { get; private set; }
 
         public void Init(string name,
             string description,
@@ -36,6 +37,7 @@ namespace DAL.Model
             this.Urls = urls;
             this.IsCacheable = isCacheable;
             this.Type = DataDefinition.SceneType.Rss;
+            this.IsInitialized = true;
 
             Calculate();
         }
@@ -50,38 +52,47 @@ namespace DAL.Model
 
         public void Calculate()
         {
-            using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
+            try
             {
-                ClearData();
-                PageBuilder builder = new PageBuilder();
-                string json = r.ReadToEnd();
-                dynamic definition = JObject.Parse(json);
-                this.HtmlContent = string.Join(Environment.NewLine, definition.rssscene.html);
-                this.JavascriptFunctions = string.Join(Environment.NewLine,
-                    definition.rssscene.javascriptFunctions);
-                this.Css = builder.AddCss((definition.rssscene.css).ToObject<List<string>>());
-                this.Js = builder.AddJs((definition.rssscene.js).ToObject<List<string>>());
-
-                var reader = XmlReader.Create(this.Urls.FirstOrDefault());
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-
-                if (feed != null)
+                using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
                 {
-                    var rssContent = "";
-                    var i = 0;
-                    foreach (var item in feed.Items)
+                    ClearData();
+
+                    var builder = new PageBuilder();
+                    var json = r.ReadToEnd();
+                    dynamic definition = JObject.Parse(json);
+                    this.HtmlContent = string.Join("", definition.rssscene.html);
+                    this.JavascriptFunctions = string.Join(Environment.NewLine,
+                        definition.rssscene.javascriptFunctions);
+                    this.Css = (definition.rssscene.css).ToObject<List<string>>();
+                    this.Js = (definition.rssscene.js).ToObject<List<string>>();
+
+                    var reader = XmlReader.Create(this.Urls.FirstOrDefault() ?? "");
+                    var feed = SyndicationFeed.Load(reader);
+                    reader.Close();
+
+                    if (feed != null)
                     {
-                        var subject = item.Title.Text;
-                        rssContent += builder.AddDivWithId(
-                            item.Summary.Text.Replace("\n", "").Replace("&nbsp", "&#160"),
-                            DataDefinition.SequenceDefinition.RssSequenceDivId + i);
-                        i++;
+                        var rssContent = "";
+                        var i = 0;
+                        foreach (var item in feed.Items)
+                        {
+                            var subject = builder.AddH1(item.Title.Text);
+                            var content = (subject + item.Summary.Text).Replace("\n", "").Replace("&nbsp", "&#160");
+
+                            rssContent += builder.AddDivWithId(content,
+                                DataDefinition.SequenceDefinition.RssSequenceDivId + i);
+                            i++;
+                        }
+                        this.HtmlContent = string.Format(this.HtmlContent, rssContent);
                     }
-                    this.HtmlContent = string.Format(this.HtmlContent, rssContent);
+                    else
+                        throw new Exception("RSS feed not available");
                 }
-                else
-                    throw new Exception("RSS feed not available");
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception occured: " + ex.Message);
             }
         }
     }

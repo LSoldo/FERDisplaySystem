@@ -43,6 +43,7 @@ namespace DAL.Model
         public abstract class Duration
         {
             public static long ThirtySeconds = 30000;
+            public static long FiveMinutes = 300000;
         }
 
         public abstract class SceneType
@@ -89,6 +90,8 @@ namespace DAL.Model
             public static string CurrentFunctions = "currentFunctions";
             public static string StageDivName = "change";
             public static string RssSequenceDivId = "content-";
+            public static string CssPathsArray = "cssPaths";
+            public static string JsPathsArray = "jsPaths";
         }
     }
 }

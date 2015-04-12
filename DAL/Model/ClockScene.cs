@@ -22,6 +22,7 @@ namespace DAL.Model
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
+        public bool IsInitialized { get; private set; }
 
         public void Init(string name, string description, List<string> urls, bool isCacheable)
         {
@@ -30,6 +31,7 @@ namespace DAL.Model
             this.Urls = urls;
             this.IsCacheable = isCacheable;
             this.Type = DataDefinition.SceneType.Clock;
+            this.IsInitialized = true;
 
             Calculate();
         }
@@ -44,20 +46,28 @@ namespace DAL.Model
 
         public void Calculate()
         {
-            using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
+            try
             {
-                ClearData();
-                var builder = new PageBuilder();
-                var json = r.ReadToEnd();
-                dynamic definition = JObject.Parse(json);
-                this.HtmlContent = string.Join(Environment.NewLine, definition.clock.html);
+                using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
+                {
+                    ClearData();
 
-                this.JavascriptFunctions = string.Join(Environment.NewLine,
-                    definition.clock.javascriptFunctions);
+                    var json = r.ReadToEnd();
+                    dynamic definition = JObject.Parse(json);
+                    this.HtmlContent = string.Join("", definition.clock.html);
 
-                this.Css = (definition.clock.css).ToObject<List<string>>();
-                this.Js = (definition.clock.js).ToObject<List<string>>();
+                    this.JavascriptFunctions = string.Join(Environment.NewLine,
+                        definition.clock.javascriptFunctions);
+
+                    this.Css = (definition.clock.css).ToObject<List<string>>();
+                    this.Js = (definition.clock.js).ToObject<List<string>>();
+                }
             }
+            catch (Exception ex)
+            {
+                throw new Exception("Exception occured: " + ex.Message);
+            }
+
         }
     }
 }

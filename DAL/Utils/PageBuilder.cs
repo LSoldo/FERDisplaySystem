@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace DAL.Utils
 {
@@ -49,24 +50,18 @@ namespace DAL.Utils
 
         public List<string> AddCss(List<string> cssArray, string media = "", string charset = "utf-8")
         {
-            List<string> cssBuilder = new List<string>();
-            foreach(var css in cssArray)
-                cssBuilder.Add(AddCss(css, media, charset));
-            return cssBuilder;
+            return cssArray.Select(css => AddCss(css, media, charset)).ToList();
         }
 
         public string AddJs(string js, string charset = "utf-8")
         {
-            string jsLayout = "<script src=\"{0}\" type=\"text/javascript\" charset=\"{1}\"></script>";
+            var jsLayout = "<script src=\"{0}\" type=\"text/javascript\" charset=\"{1}\"></script>";
             return string.Format(jsLayout + Environment.NewLine, js, charset);
         }
 
         public List<string> AddJs(List<string> jsArray, string charset = "utf-8")
         {
-            List<string> jsBuilder = new List<string>();
-            foreach (var js in jsArray)
-                jsBuilder.Add(AddJs(js, charset));
-            return jsBuilder;
+            return jsArray.Select(js => AddJs(js, charset)).ToList();
         }
 
         public string AddJsScript(string content, string charset = "utf-8")
@@ -82,10 +77,7 @@ namespace DAL.Utils
 
         public List<string> AddImg(List<string> urls)
         {
-            List<string> imgBuilder = new List<string>();
-            foreach (var url in urls)
-                imgBuilder.Add(AddImg(url));
-            return imgBuilder;
+            return urls.Select(url => AddImg(url)).ToList();
         }
 
         public string AddImg(string url, string width = null, string height = null)
@@ -94,22 +86,36 @@ namespace DAL.Utils
             string dimensions = width == null && height == null
                 ? "width=\"1400\" height=\"1050\""
                 : string.Format("width=\"{0}\" height=\"{1}\"", width, height);
-            return string.Format("<img src=\"{0}\" {1} />" + Environment.NewLine, url, dimensions);
+            return string.Format("<img src=\"{0}\" {1} />" , url, dimensions);
         }
 
         public string AddDiv(string content)
         {
-            return "<div>" + Environment.NewLine + content + "</div>" + Environment.NewLine;
+            return "<div>"  + content + "</div>" ;
         }
         public string AddDivWithId(string content, string id)
         {
-            return string.Format("<div id=\"{0}\">", id) + Environment.NewLine + content + "</div>" + Environment.NewLine;
+            return string.Format("<div id=\"{0}\">", id)  + content + "</div>" ;
         }
 
+        public string AddDivWithStyle(string content, string style)
+        {
+            return string.Format("<div style=\"{0}\">", style)  + content + "</div>" ;
+        }
+
+        public string AddDivWithIdAndStyle(string content, string id, string style)
+        {
+            return string.Format("<div id=\"{0}\" style=\"{1}\">", id, style) + content + "</div>";
+        }
 
         public string AddEmptyDivWithId(string id)
         {
-            return string.Format("<div id=\"{0}\"></div>", id) + Environment.NewLine;
+            return string.Format("<div id=\"{0}\"></div>", id) ;
+        }
+
+        public string AddH1(string content)
+        {
+            return "<h1>"  + content + "</h1>" ;
         }
 
         public string AddBody(string content)
@@ -123,9 +129,7 @@ namespace DAL.Utils
 
         public string AddToListOfFunctions(List<string> content)
         {
-            string outContent = "";
-            foreach (var function in content)
-                outContent += CreateFunction(function);
+            var outContent = content.Aggregate("", (current, function) => current + CreateFunction(function));
 
             return "[" + outContent + "]" + Environment.NewLine;
         }
@@ -161,7 +165,7 @@ namespace DAL.Utils
 
         public string BuildHeadContent(List<string> cssPathList, List<string> jsPathList, string encoding = "Windows-1250")
         {
-            string outputContent = "";
+            var outputContent = "";
 
             outputContent += AddHead(
                 AddLines(

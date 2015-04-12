@@ -11,17 +11,8 @@
             "</video>"
         ],
 		"css": [
+            "http://localhost:11527/Content/html5video.css"
 		],
-        "cssDefinition": [
-            "<style type=\"text/css\" media=\"screen\">",
-			"html {overflow-x:hidden;}",
-			"body {font-family:arial;margin:0;padding:0;}",
-			"video, object {",
-				"top:0;left:0;",
-				"position:absolute;",
-			"}",			
-		"</style>"
-        ],
 		"js": [
 		],
 		"javascriptFunctions": [
@@ -58,16 +49,19 @@
 			"</div>"
         ],
         "css": [
+            "http://localhost:11527/Content/rssscene.css"
 		],
 		"js": [
 		],
 		"javascriptFunctions": [
-            "var divs = $('div[id^=\"content-\"]').hide(),",
-                "i = 0;",
+            "var divs = $('div[id^=\"content-\"]').hide();",
+                "var lastSlide = localStorage.getItem(\"RssSlide\") == null ? 0 : localStorage.getItem(\"RssSlide\");",
+                "var i = lastSlide > divs.length - 1 ? 0 : lastSlide;",
                 "(function cycle() {", 
                     "divs.eq(i).fadeIn(400)",
-                        ".delay(5000)",
+                        ".delay(2000)",
                         ".fadeOut(400, cycle);",
+                     "localStorage.setItem(\"RssSlide\", i);",
                      "i = ++i % divs.length;", 
                      "})();"
 		]
@@ -94,8 +88,7 @@
         "js": [
 
         ],
-        "javascriptFunctions": [
-            "jQuery('#clock').maximage('maxcover');",					
+        "javascriptFunctions": [				
 					"var monthNames = [ \"Siječanj\", \"Veljača\", \"Ožujak\", \"Travanj\", \"Svibanj\", \"Lipanj\", \"Srpanj\", \"Kolovoz\", \"Rujan\", \"Listopad\", \"Studeni\", \"Prosinac\" ];",
 					"var dayNames= [\"Nedjelja\",\"Ponedjeljak\",\"Utorak\",\"Srijeda\",\"Četvrtak\",\"Petak\",\"Subota\"]",
 					"var newDate = new Date();",
