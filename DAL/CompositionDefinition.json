@@ -10,10 +10,21 @@
             "http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js",
             "http://localhost:11527/Scripts/jquery.cycle.all.js",
             "http://localhost:11527/Scripts/jquery.maximage.js",
-            "http://localhost:11527/Scripts/cssjshandling.js"
+            "http://localhost:11527/Scripts/cssjshandling.js",
+            "http://localhost:11527/Scripts/jquery.signalR-2.0.2.min.js",
+            "http://localhost:11527/signalr/hubs",
+            "http://localhost:11527/Scripts/sequence.js"
 		],
 		"javascriptFunctions": [
-            "var msgPtr = 0;",
+                "var connHub = $.connection.connectionHub;",
+                "$.connection.hub.start().done(function () {{}});",
+                "connHub.client.updatesequence = function () {{",
+                "content = [\"hello world\"];",
+                "intervals = [20000];",
+                "currentFunctions = [[]];",
+                "msgPtr = 0;",
+                "}};",
+                "msgPtr = 0;",
 				"var stopAction = null;",
 				"function change() {{",
 					"if(stopAction != null)",

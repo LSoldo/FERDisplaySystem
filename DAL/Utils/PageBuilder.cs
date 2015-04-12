@@ -6,14 +6,19 @@ namespace DAL.Utils
 {
     public class PageBuilder
     {
-        public string BuildVarArray(List<string> values, string varName)
+        public string AddVarArray(List<string> values, string varName)
         {
             return "var " + varName + " = [" + string.Join(", ", values) + "];" + Environment.NewLine;
         }
 
-        public string BuildVarArray(string content, string varName)
+        public string AddVarArray(string value, string varName)
         {
-            return "var " + varName + " = [" + content + "];" + Environment.NewLine;
+            return "var " + varName + " = [" + value + "];" + Environment.NewLine;
+        }
+
+        public string AddVar(string value, string varName)
+        {
+            return "var " + varName + " = " + value + ";" + Environment.NewLine;
         }
 
         public string RemoveItemInLocalStorage(string key)
@@ -43,8 +48,8 @@ namespace DAL.Utils
 
         public string AddCss(string css, string media = "", string charset = "utf-8")
         {
-            string mediaOption = string.IsNullOrEmpty(media) ? "" : media;
-            string cssLayout = "<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" {1} charset=\"{2}\" />";
+            var mediaOption = string.IsNullOrEmpty(media) ? "" : media;
+            var cssLayout = "<link rel=\"stylesheet\" href=\"{0}\" type=\"text/css\" {1} charset=\"{2}\" />";
             return string.Format(cssLayout + Environment.NewLine, css, mediaOption, charset);
         }
 
@@ -146,11 +151,11 @@ namespace DAL.Utils
 
         public string AddToArray(List<string> content)
         {
-            return "[" + string.Join("," + Environment.NewLine, content) + "]" + Environment.NewLine;
+            return "[" + string.Join(",", content) + "]" + Environment.NewLine;
         }
         public string AddToArray(string content)
         {
-            return "[" + content + Environment.NewLine + "]" + Environment.NewLine;
+            return "[" + content + "]" + Environment.NewLine;
         }
 
         public string AddHtml5Declaration()
