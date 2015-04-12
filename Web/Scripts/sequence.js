@@ -2,20 +2,19 @@
     var connHub = $.connection.connectionHub;
     var stopAction = null;
     $.connection.hub.start().done(function () {
-        if (stopAction != null) {
-            clearInterval(stopAction);
-        }
         connHub.server.update();
     });
-    connHub.client.updatesequence = function() {
-            content = ["hello world"];
-            intervals = [20000];
-            currentFunctions = [[]];
-            msgPtr = 0;
+    connHub.client.updatesequence = function(foo) {
+        content = ["hello world", "umri gade"];
+        intervals = [10000,10000];
+        currentFunctions = [[], []];//JSON.parse(foo);
+        msgPtr = 0;
+        jsPaths = [[], []];
+        cssPaths = [[], []];
+        change();
     };
     msgPtr = 0;
     
-
     function change() {
 
         if (stopAction != null) {
@@ -31,7 +30,6 @@
                 } else {
                     removejscssfile(cssPaths[indexForScene][indexForCssInScene], "css");
                 }
-
             }
         }
         for (indexForScene = 0, sceneLength = jsPaths.length; indexForScene < sceneLength; ++indexForScene) {

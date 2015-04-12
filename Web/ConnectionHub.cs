@@ -10,7 +10,7 @@ namespace Web
     {
         public void Update()
         {
-            Clients.All.updatesequence();
+            Clients.All.updatesequence("[[function(){alert(\"hello\")}],[[function(){alert(\"hello\")}]]");
         }
     }
 }
