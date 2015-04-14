@@ -1,16 +1,19 @@
-﻿$(function() {
+﻿var msgPtr = 0;
+
+$(function () {
     var connHub = $.connection.connectionHub;
     var stopAction = null;
     $.connection.hub.start().done(function () {
-        connHub.server.update();
+        //connHub.server.update();
     });
-    connHub.client.updatesequence = function(foo) {
-        content = ["hello world", "umri gade"];
-        intervals = [10000,10000];
-        currentFunctions = [[], []];//JSON.parse(foo);
+    connHub.client.updatesequence = function(contentList, intervalList, currentFunctionList, jsPathsList, cssPathsList) {
+        content = contentList;//["aaaaa"];
+        intervals = intervalList;//[100000];
+        currentFunctions = currentFunctionList;//[["clock"]];
         msgPtr = 0;
-        jsPaths = [[], []];
-        cssPaths = [[], []];
+        jsPaths = jsPathsList;//[[]];
+        cssPaths = cssPathsList;//[["http://localhost:11527/Content/clock.css"]];
+
         change();
     };
     msgPtr = 0;
@@ -43,8 +46,9 @@
 
             }
         }
-        currentFunctions[msgPtr].forEach(function(backFoo) {
-            backFoo();
+        currentFunctions[msgPtr].forEach(function (functionName) {
+            console.log(functionName);
+            window[functionName]();
         });
         stopAction = setInterval(change, intervals[msgPtr]);
         msgPtr++;

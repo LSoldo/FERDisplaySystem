@@ -9,6 +9,7 @@ using DAL.Factories;
 using DAL.Interfaces;
 using DAL.Model;
 using DAL.Utils;
+using Microsoft.AspNet.SignalR;
 using Newtonsoft.Json;
 
 namespace Web.Controllers

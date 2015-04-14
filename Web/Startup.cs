@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Configuration;
 using System.Threading.Tasks;
+using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
 using Owin;
 
@@ -11,7 +13,9 @@ namespace Web
     {
         public void Configuration(IAppBuilder app)
         {
+            //GlobalHost.DependencyResolver.UseSqlServer(ConfigurationManager.ConnectionStrings["signalr"].ConnectionString);
             app.MapSignalR();
         }
     }
+
 }

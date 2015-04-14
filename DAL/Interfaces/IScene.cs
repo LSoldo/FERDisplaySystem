@@ -21,7 +21,7 @@ namespace DAL.Interfaces
         string HtmlContent { get; }
         List<string> Css { get; set; }
         List<string> Js { get; set; } 
-        string JavascriptFunctions { get; }
+        List<string> JavascriptFunctions { get; }
         bool IsCacheable { get; }
         bool IsInitialized { get; }
         void Init(string name, string description, List<string> urls, bool isCacheable);

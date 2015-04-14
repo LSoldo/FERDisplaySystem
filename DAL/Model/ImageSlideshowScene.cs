@@ -17,7 +17,7 @@ namespace DAL.Model
         public string Description { get; set; }
         public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
-        public string JavascriptFunctions { get; set; }
+        public List<string> JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
@@ -56,8 +56,7 @@ namespace DAL.Model
                         string.Join("", builder.AddImg(this.Urls))
                         );
 
-                    this.JavascriptFunctions = string.Join(Environment.NewLine,
-                        definition.imageslideshow.javascriptFunctions);
+                    this.JavascriptFunctions = (definition.imageslideshow.javascriptFunctions).ToObject<List<string>>();
 
                     this.Css = (definition.imageslideshow.css).ToObject<List<string>>();
                     this.Js = (definition.imageslideshow.js).ToObject<List<string>>();

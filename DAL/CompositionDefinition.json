@@ -13,7 +13,8 @@
             "http://localhost:11527/Scripts/cssjshandling.js",
             "http://localhost:11527/Scripts/jquery.signalR-2.0.2.min.js",
             "http://localhost:11527/signalr/hubs",
-            "http://localhost:11527/Scripts/sequence.js"
+            "http://localhost:11527/Scripts/sequence.js",
+            "http://localhost:11527/Scripts/scenes.js"
 		],
 		"javascriptFunctions": [
                 "var connHub = $.connection.connectionHub;",

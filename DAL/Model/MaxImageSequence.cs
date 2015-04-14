@@ -33,25 +33,14 @@ namespace DAL.Model
                 this.Css = definition.maximage.css.ToObject<List<string>>();
                 this.Js = definition.maximage.js.ToObject<List<string>>();
 
-                //var javascriptFunctionsFromJsonFile = string.Join(Environment.NewLine,
-                  //  definition.maximage.javascriptFunctions);
-                //this.JavascriptFunctions = string.Format(javascriptFunctionsFromJsonFile,
-                  //  DataDefinition.SequenceDefinition.StageDivName);
-
-                //Adding css and js from scenes also
-                //this.Scenes.ForEach(s => s.Scene.Css.ForEach(this.Css.Add));
-                //this.Scenes.ForEach(s => s.Scene.Js.ForEach(this.Js.Add));
-                //this.Css = this.Css.Distinct().ToList();
-                //this.Js = this.Js.Distinct().ToList();
-
                 this.HtmlContent += builder.AddHtml5Declaration();
                 var headContent = builder.BuildHeadContent(this.Css, this.Js);
-                var bodyContent = BuildBodyContent(/*this.JavascriptFunctions,*/ this.Scenes);
+                var bodyContent = BuildBodyContent(this.Scenes);
                 this.HtmlContent += builder.AddHtmlTags(headContent + bodyContent);
             }
         }
 
-        private static string BuildBodyContent(/*string mainJavascriptFunction,*/ List<SequenceScene> scenes)
+        private static string BuildBodyContent(List<SequenceScene> scenes)
         {
             var htmlDefinitionsForScenes = scenes.Select(s => s.Scene.HtmlContent).ToList();
             var sceneJavascriptFunctions = scenes.Select(s => s.Scene.JavascriptFunctions).ToList();
@@ -72,31 +61,21 @@ namespace DAL.Model
 
             var sceneDedicatedFunctions =
                 builder.AddVarArray(
-                    string.Join(",",
-                        sceneJavascriptFunctions
-                            .Select(function => builder
-                                .AddToArray(builder.CreateFunction(function)))
-                            .ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.JavascriptFunctions.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.CurrentFunctions);
 
             var cssPaths =
                 builder.AddVarArray(
-                    string.Join(",",
-                        scenes.Select(scene => builder.AddToArray(scene.Scene.Css.ConvertAll(i => "'" + i + "'")))
-                            .ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.Css.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.CssPathsArray);
 
             var jsPaths =
                 builder.AddVarArray(
-                    string.Join(",",
-                        scenes.Select(scene => builder.AddToArray(scene.Scene.Js.ConvertAll(i => "'" + i + "'")))
-                            .ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.Js.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.JsPathsArray);
 
-            //var jQueryOnDocumentReadyFunction =
-                //builder.CreatejQueryOnDocumentReadyFunction(mainJavascriptFunction);
             var sequenceMainFunction = builder.AddJsScript(content + intervals + jsPaths + cssPaths +
-                                                           sceneDedicatedFunctions + builder.AddVar("0", "msgPtr")/* + jQueryOnDocumentReadyFunction*/);
+                                                           sceneDedicatedFunctions);
 
             var emptyDivForSceneChange = builder.AddEmptyDivWithId(DataDefinition.SequenceDefinition.StageDivName);
 

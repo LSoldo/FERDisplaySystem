@@ -8,9 +8,13 @@ namespace Web
 {
     public class ConnectionHub : Hub
     {
-        public void Update()
+        public void Update(List<string> contentList,
+            List<long> intervalList,
+            List<List<string>> currentFunctionList,
+            List<List<string>> jsPathList,
+            List<List<string>> cssPathList)
         {
-            Clients.All.updatesequence("[[function(){alert(\"hello\")}],[[function(){alert(\"hello\")}]]");
+            Clients.All.updatesequence(contentList, intervalList, currentFunctionList, jsPathList, cssPathList);
         }
     }
 }

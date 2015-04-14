@@ -18,7 +18,7 @@ namespace DAL.Model
         public string Description { get; set; }
         public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
-        public string JavascriptFunctions { get; set; }
+        public List<string> JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
@@ -55,10 +55,7 @@ namespace DAL.Model
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
                     this.HtmlContent = string.Join("", definition.clock.html);
-
-                    this.JavascriptFunctions = string.Join(Environment.NewLine,
-                        definition.clock.javascriptFunctions);
-
+                    this.JavascriptFunctions = (definition.clock.javascriptFunctions).ToObject<List<string>>();
                     this.Css = (definition.clock.css).ToObject<List<string>>();
                     this.Js = (definition.clock.js).ToObject<List<string>>();
                 }

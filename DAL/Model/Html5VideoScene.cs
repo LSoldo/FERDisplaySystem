@@ -18,7 +18,7 @@ namespace DAL.Model
         public string Description { get; set; }
         public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
-        public string JavascriptFunctions { get; set; }
+        public List<string> JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
@@ -52,8 +52,7 @@ namespace DAL.Model
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
                     this.HtmlContent = string.Format(string.Join("", definition.html5videoscene.html), this.Urls.FirstOrDefault());
-                    this.JavascriptFunctions = string.Join(Environment.NewLine,
-                        definition.html5videoscene.javascriptFunctions);
+                    this.JavascriptFunctions = (definition.html5videoscene.javascriptFunctions).ToObject<List<string>>();
                     this.Css = definition.html5videoscene.css.ToObject<List<string>>();
                     this.Js = definition.html5videoscene.js.ToObject<List<string>>();
                 }
