@@ -21,13 +21,14 @@ namespace Web.Controllers
             return View();
         }
 
-        public ActionResult Terminal()
+        public ActionResult Terminal(string id)
         {
             var sceneFactory = new SceneFactory();
             var sequenceFactory = new SequenceFactory();
 
             var rss = sceneFactory.GetScene(DataDefinition.SceneType.Rss);
             rss.Init("ime", "opis", new List<string>() { "http://www.fer.unizg.hr/feed/rss.php?url=/" }, true);
+            rss.Id = 1;
 
             var video = sceneFactory.GetScene(DataDefinition.SceneType.Video);
             video.Init("ime", "opis", new List<string>() { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" }, true);
@@ -38,16 +39,17 @@ namespace Web.Controllers
             var sequenceScene = new List<SequenceScene>
             {
                 new SequenceScene() {Duration = TimeSpan.FromMilliseconds(20000), Scene = rss},
-                new SequenceScene() {Duration = TimeSpan.FromMilliseconds(20000), Scene = clock},
+                new SequenceScene() {Duration = TimeSpan.FromMilliseconds(20000), Scene = clock}
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
             sequence.Init("Sekvenca", "opis", sequenceScene);
+            sequence.Id = 1;
 
             //var converter = new PowerPointConverter();
             //converter.GetVideoFromPpt(@"C:\Users\Luka\Downloads\flip.ppt", @"C:\Users\Luka\Desktop");
 
-            return Content(sequence.HtmlContent);
+            return Content(sequence.GenerateHtml(id));
         }
 
         public ActionResult Calendar()

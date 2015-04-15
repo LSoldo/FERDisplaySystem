@@ -92,6 +92,7 @@
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DisplaySetting.cs" />
     <Compile Include="Model\SequenceScene.cs" />
+    <Compile Include="Model\SequenceSetup.cs" />
     <Compile Include="Model\Terminal.cs" />
     <Compile Include="Model\TerminalSequence.cs" />
     <Compile Include="Utils\PageBuilder.cs" />

@@ -1,34 +1,37 @@
 ﻿var msgPtr = 0;
-
 $(function () {
     var connHub = $.connection.connectionHub;
     var stopAction = null;
     $.connection.hub.start().done(function () {
-        //connHub.server.update();
+        connHub.server.joinRoom(groupId);
     });
-    connHub.client.updatesequence = function(contentList, intervalList, currentFunctionList, jsPathsList, cssPathsList) {
-        content = contentList;//["aaaaa"];
-        intervals = intervalList;//[100000];
-        currentFunctions = currentFunctionList;//[["clock"]];
-        msgPtr = 0;
-        jsPaths = jsPathsList;//[[]];
-        cssPaths = cssPathsList;//[["http://localhost:11527/Content/clock.css"]];
-
+    connHub.client.updatesequence = function(setup, sequenceIdentity) {
+        content = setup.HtmlContentForEveryScene;
+        intervals = setup.Intervals;
+        currentFunctions = setup.JsFunctionsToCall;
+        jsPaths = setup.JsPathList;
+        cssPaths = setup.CssPathList;
+        sequenceId = sequenceIdentity;
+        
         change();
     };
-    msgPtr = 0;
-    
-    function change() {
+    if (localStorage.getItem(sequenceId) == null) {
+        localStorage.setItem(sequenceId, 0);
+    }
 
+    msgPtr = sequenceId == "" || sequenceId == null ? 0 : localStorage.getItem(sequenceId);
+    console.log(msgPtr);
+
+    function change() {
         if (stopAction != null) {
-            clearInterval(stopAction);
+            clearInterval(stopAction);           
         }
         var newMsg = content[msgPtr];
         document.getElementById("change").innerHTML = newMsg;
         var indexForScene, sceneLength, indexForCssInScene, cssLengthForScene, indexForJsInScene, jsLengthForScene;
         for (indexForScene = 0, sceneLength = cssPaths.length; indexForScene < sceneLength; ++indexForScene) {
             for (indexForCssInScene = 0, cssLengthForScene = cssPaths[indexForScene].length; indexForCssInScene < cssLengthForScene; ++indexForCssInScene) {
-                if (indexForScene === msgPtr) {
+                if (indexForScene == msgPtr) {
                     loadjscssfile(cssPaths[indexForScene][indexForCssInScene], "css");
                 } else {
                     removejscssfile(cssPaths[indexForScene][indexForCssInScene], "css");
@@ -38,7 +41,7 @@ $(function () {
         for (indexForScene = 0, sceneLength = jsPaths.length; indexForScene < sceneLength; ++indexForScene) {
             for (indexForJsInScene = 0, jsLengthForScene = jsPaths[indexForScene].length; indexForJsInScene < jsLengthForScene; ++indexForJsInScene) {
 
-                if (indexForScene === msgPtr) {
+                if (indexForScene == msgPtr) {
                     loadjscssfile(jsPaths[indexForScene][indexForJsInScene], "js");
                 } else {
                     removejscssfile(jsPaths[indexForScene][indexForJsInScene], "js");
@@ -48,9 +51,10 @@ $(function () {
         }
         currentFunctions[msgPtr].forEach(function (functionName) {
             console.log(functionName);
-            window[functionName]();
+            window[functionName](sequenceId);
         });
         stopAction = setInterval(change, intervals[msgPtr]);
+        localStorage.setItem(sequenceId, msgPtr);
         msgPtr++;
         msgPtr = (msgPtr % content.length);
     }

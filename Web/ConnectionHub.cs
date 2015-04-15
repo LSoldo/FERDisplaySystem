@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using DAL.Model;
 using Microsoft.AspNet.SignalR;
 
 namespace Web
 {
     public class ConnectionHub : Hub
     {
-        public void Update(List<string> contentList,
-            List<long> intervalList,
-            List<List<string>> currentFunctionList,
-            List<List<string>> jsPathList,
-            List<List<string>> cssPathList)
+        public void Update(SequenceSetup setup)
         {
-            Clients.All.updatesequence(contentList, intervalList, currentFunctionList, jsPathList, cssPathList);
+            Clients.All.updatesequence(setup);
+        }
+
+        public void UpdateGroup(SequenceSetup setup, string groupId)
+        {
+            Clients.Group(groupId).updatesequence(setup);
+        }
+        public void JoinRoom(string roomName)
+        {
+            Groups.Add(Context.ConnectionId, roomName);
         }
     }
 }

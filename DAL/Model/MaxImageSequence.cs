@@ -14,18 +14,18 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public string HtmlContent { get; private set; }
         public List<string> Css { get; private set; }
         public List<string> Js { get; private set; }
         public string JavascriptFunctions { get; private set; }
         public string Type { get; private set; }
         public List<SequenceScene> Scenes { get; set; }
 
-        public void Calculate()
+        public string GenerateHtml(string groupId)
         {
             using (var r = new StreamReader(DataDefinition.SequenceDefinition.Path))
             {
                 ClearData();
+                string htmlContent = "";
                 var builder = new PageBuilder();
                 var json = r.ReadToEnd();
                 dynamic definition = JObject.Parse(json);
@@ -33,21 +33,25 @@ namespace DAL.Model
                 this.Css = definition.maximage.css.ToObject<List<string>>();
                 this.Js = definition.maximage.js.ToObject<List<string>>();
 
-                this.HtmlContent += builder.AddHtml5Declaration();
+                htmlContent += builder.AddHtml5Declaration();
                 var headContent = builder.BuildHeadContent(this.Css, this.Js);
-                var bodyContent = BuildBodyContent(this.Scenes);
-                this.HtmlContent += builder.AddHtmlTags(headContent + bodyContent);
+                var bodyContent = BuildBodyContent(this.Scenes, groupId);
+                htmlContent += builder.AddHtmlTags(headContent + bodyContent);
+
+                return htmlContent;
             }
         }
 
-        private static string BuildBodyContent(List<SequenceScene> scenes)
+        private string BuildBodyContent(List<SequenceScene> scenes, string groupId)
         {
             var htmlDefinitionsForScenes = scenes.Select(s => s.Scene.HtmlContent).ToList();
-            var sceneJavascriptFunctions = scenes.Select(s => s.Scene.JavascriptFunctions).ToList();
             var sceneIntervals = scenes.Select(scene => (long) scene.Duration.TotalMilliseconds).ToList();
 
             var outputContent = "";
             var builder = new PageBuilder();
+
+            var group = builder.AddVar("\"" + groupId + "\"", DataDefinition.SequenceDefinition.GroupId);
+            var sequenceId = builder.AddVar("\"" + this.Id + "\"", DataDefinition.SequenceDefinition.SequenceId);
 
             var content =
                 builder.AddVarArray(
@@ -74,7 +78,7 @@ namespace DAL.Model
                     string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.Js.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.JsPathsArray);
 
-            var sequenceMainFunction = builder.AddJsScript(content + intervals + jsPaths + cssPaths +
+            var sequenceMainFunction = builder.AddJsScript(content + group + sequenceId + intervals + jsPaths + cssPaths + 
                                                            sceneDedicatedFunctions);
 
             var emptyDivForSceneChange = builder.AddEmptyDivWithId(DataDefinition.SequenceDefinition.StageDivName);
@@ -88,7 +92,6 @@ namespace DAL.Model
         {
             this.Css = null;
             this.Js = null;
-            this.HtmlContent = "";
             this.JavascriptFunctions = "";
         }
 
@@ -98,8 +101,6 @@ namespace DAL.Model
             this.Description = description;
             this.Scenes = scenes;
             this.Type = DataDefinition.SequenceType.MaxImage;
-
-            Calculate();
         }
 
 

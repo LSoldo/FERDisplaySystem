@@ -86,6 +86,8 @@ namespace DAL.Model
             }
 
             public static string Intervals = "intervals";
+            public static string GroupId = "groupId";
+            public static string SequenceId = "sequenceId";
             public static string Content = "content";
             public static string CurrentFunctions = "currentFunctions";
             public static string StageDivName = "change";
