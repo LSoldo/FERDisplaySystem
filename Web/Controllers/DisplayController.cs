@@ -38,8 +38,7 @@ namespace Web.Controllers
 
             var sequenceScene = new List<SequenceScene>
             {
-                new SequenceScene() {Duration = TimeSpan.FromMilliseconds(20000), Scene = rss},
-                new SequenceScene() {Duration = TimeSpan.FromMilliseconds(20000), Scene = clock}
+                new SequenceScene(rss, TimeSpan.FromMilliseconds(20000), true)
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);

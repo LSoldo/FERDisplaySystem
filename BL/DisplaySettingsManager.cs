@@ -21,11 +21,11 @@ namespace BL
             var times = CreateDisplayTimes(setting);
             if (times == null) 
                 throw new ArgumentNullException("times");
-            CalculateDisplaySettingAdditionalValues(ref setting, times);
+            CalculateDisplaySettingAdditionalProperties(ref setting, times);
             return times;
         }
 
-        public void CalculateDisplaySettingAdditionalValues(ref DisplaySetting setting, List<TimeInterval> times)
+        public void CalculateDisplaySettingAdditionalProperties(ref DisplaySetting setting, List<TimeInterval> times)
         {
             if (setting.ShowEvery.HasValue && (setting.ConsecutiveTimesToShow == null || setting.ConsecutiveTimesToShow == 0))
                 setting.ValidUntil = DateTime.MaxValue;
@@ -114,6 +114,11 @@ namespace BL
         public bool IsOverlappingWithExistingDate(List<TimeInterval> scheduledTimes, DateTime newTime)
         {
             return scheduledTimes.Any(t => t.TimeFrom <= newTime && t.TimeTo >= newTime);
+        }
+
+        public bool IsOverlappingWithExistingDate(TimeInterval scheduledTimes, DateTime newTime)
+        {
+            return scheduledTimes.TimeFrom <= newTime && newTime <= scheduledTimes.TimeTo;
         }
 
         public bool IsOverlappingWithExistingDate(List<TimeInterval> scheduledTimes,

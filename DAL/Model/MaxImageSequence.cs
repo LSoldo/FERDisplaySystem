@@ -103,7 +103,6 @@ namespace DAL.Model
             this.Type = DataDefinition.SequenceType.MaxImage;
         }
 
-
         public void Add(SequenceScene scene)
         {
             this.Scenes.Add(scene);

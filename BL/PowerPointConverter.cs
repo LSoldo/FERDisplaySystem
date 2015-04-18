@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Core;
 
-namespace DAL.Utils
+namespace BL
 {
     public class PowerPointConverter
     {

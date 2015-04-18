@@ -10,6 +10,7 @@ namespace BL
 {
     public class TerminalManager
     {
+
         public bool RecalculateDisplayTimesForTerminal(Terminal terminal,
             TerminalSequence terminalSequence,
             DateTime startTime,
@@ -38,8 +39,50 @@ namespace BL
             return true;
         }
 
+        public TerminalSequence UpdateTerminalSequenceAndGetCurrentSequence(Terminal terminal,
+            DateTime targetTime,
+            out bool sequenceChanged)
+        {
+            sequenceChanged = false;
+            var manager = new DisplaySettingsManager();
 
+            //simply get new sequence if we're out of time interval, it doesn't matter what it is
+            if ((terminal.CurrentSequenceValidFromToInterval != null &&
+                !manager.IsOverlappingWithExistingDate(terminal.CurrentSequenceValidFromToInterval, targetTime)))
+            {
+                var newCurrentSequence = GetCurrentScheduleForTerminal(terminal, targetTime) ??
+                                             terminal.DefaultSequence;
+                terminal.ManualSequence = null;
+                terminal.CurrentSequence = newCurrentSequence;
+                terminal.CurrentSequenceValidFromToInterval = GetCurrentTimeIntervalForSequence(newCurrentSequence,
+                    targetTime);
+                sequenceChanged = true;
 
+                return newCurrentSequence;
+            }
+
+            else if (terminal.ManualSequence != null)
+            {
+                var sequence = terminal.ManualSequence;
+
+                if (terminal.CurrentSequence == sequence)
+                    return sequence;
+
+                terminal.CurrentSequence = sequence;
+                sequenceChanged = true;
+                return sequence;
+            }
+            else
+            {
+                return terminal.CurrentSequence;
+            }
+        }
+
+        public TimeInterval GetCurrentTimeIntervalForSequence(TerminalSequence sequence, DateTime targetTime)
+        {
+            return
+                sequence.TimeIntervals.FirstOrDefault(t => t.TimeFrom <= targetTime && targetTime <= t.TimeTo);
+        }
         public TerminalSequence GetCurrentScheduleForTerminal(Terminal terminal)
         {
             return GetCurrentSchedule(terminal.Id, DateTime.Now);
@@ -47,7 +90,13 @@ namespace BL
 
         public TerminalSequence GetCurrentScheduleForTerminal(Terminal terminal, DateTime targetTime)
         {
-            return GetCurrentSchedule(terminal.Id, targetTime);
+            var sequences = terminal.AllSequences;
+
+            return (from sequence in sequences
+                    let interval =
+                        sequence.TimeIntervals.FirstOrDefault(i => i.TimeFrom <= targetTime && i.TimeTo >= targetTime)
+                    where interval != null
+                    select sequence).FirstOrDefault();
         }
 
         public TerminalSequence GetCurrentScheduleForTerminal(int terminalId)
@@ -62,13 +111,13 @@ namespace BL
 
         private TerminalSequence GetCurrentSchedule(int terminalId, DateTime targetTime)
         {
-            var times = GetScheduleForTerminal(terminalId);
+            var sequences = GetScheduleForTerminal(terminalId);
 
-            return (from time in times
+            return (from sequence in sequences
                     let interval =
-                        time.TimeIntervals.FirstOrDefault(i => i.TimeFrom <= targetTime && i.TimeTo >= targetTime)
+                        sequence.TimeIntervals.FirstOrDefault(i => i.TimeFrom <= targetTime && i.TimeTo >= targetTime)
                     where interval != null
-                    select time).FirstOrDefault();
+                    select sequence).FirstOrDefault();
         }
 
         public List<TerminalSequence> GetScheduleForTerminal(int terminalId)
@@ -80,12 +129,12 @@ namespace BL
             DateTime timeFrom,
             DateTime timeTo)
         {
-            var times = GetScheduleForTerminal(terminalId);
+            var sequences = GetScheduleForTerminal(terminalId);
 
             return
-                times.Where(
-                    time =>
-                        time.TimeIntervals.Any(
+                sequences.Where(
+                    sequence =>
+                        sequence.TimeIntervals.Any(
                             t =>
                                 ((t.TimeFrom <= timeFrom && t.TimeTo > timeFrom) ||
                                  (t.TimeFrom < timeTo && t.TimeTo >= timeTo) ||
