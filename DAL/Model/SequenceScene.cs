@@ -10,7 +10,6 @@ namespace DAL.Model
     public class SequenceScene
     {
         public int Id { get; set; }
-        public ISequence Sequence { get; set; }
         public IScene Scene { get; set; }
         public SceneSetup Setup { get; set; }
         public TimeSpan Duration { get; set; }

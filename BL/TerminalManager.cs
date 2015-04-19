@@ -39,14 +39,10 @@ namespace BL
             return true;
         }
 
-        public TerminalSequence UpdateTerminalSequenceAndGetCurrentSequence(Terminal terminal,
-            DateTime targetTime,
-            out bool sequenceChanged)
+        public TerminalSequence UpdateTerminalSequenceAndGetCurrentSequence(Terminal terminal, DateTime targetTime)
         {
-            sequenceChanged = false;
             var manager = new DisplaySettingsManager();
 
-            
             //default case
             if (terminal.CurrentSequenceValidFromToInterval == null && terminal.CurrentSequence == null &&
                 terminal.ManualSequence == null)
@@ -55,20 +51,19 @@ namespace BL
 
                 if (newCurrentSequence == null)
                     return terminal.DefaultSequence;
-                
+
                 terminal.CurrentSequence = newCurrentSequence;
                 terminal.CurrentSequenceValidFromToInterval = GetCurrentTimeIntervalForSequence(newCurrentSequence,
                     targetTime);
-                sequenceChanged = true;
-
+                terminal.CurrentSequence.CurrentType = DataDefinition.CurrentSequence.ScheduledSequence;
                 return newCurrentSequence;
             }
-            
+
             //simply get new sequence if we're out of time interval, it doesn't matter what it is
             if ((terminal.CurrentSequenceValidFromToInterval != null &&
-                !manager.IsOverlappingWithExistingDate(terminal.CurrentSequenceValidFromToInterval, targetTime)))
+                 !manager.IsOverlappingWithExistingDate(terminal.CurrentSequenceValidFromToInterval, targetTime)))
             {
-                sequenceChanged = true;
+                terminal.ManualSequence = null;
                 var newCurrentSequence = GetCurrentScheduleForTerminal(terminal, targetTime);
 
                 if (newCurrentSequence == null)
@@ -77,29 +72,33 @@ namespace BL
                     terminal.CurrentSequenceValidFromToInterval = null;
                     return terminal.DefaultSequence;
                 }
-                terminal.ManualSequence = null;
                 terminal.CurrentSequence = newCurrentSequence;
                 terminal.CurrentSequenceValidFromToInterval = GetCurrentTimeIntervalForSequence(newCurrentSequence,
                     targetTime);
-
+                terminal.CurrentSequence.CurrentType = DataDefinition.CurrentSequence.ScheduledSequence;
                 return newCurrentSequence;
             }
             else if (terminal.ManualSequence != null)
-            {
-                var sequence = terminal.ManualSequence;
+                return terminal.CurrentSequence = terminal.ManualSequence;
+            return terminal.CurrentSequence;
+        }
 
-                if (terminal.CurrentSequence == sequence)
-                    return sequence;
+        public TerminalSequence GetCurrentSequence(Terminal terminal, DateTime targetTime)
+        {
+            var manager = new DisplaySettingsManager();
 
-                terminal.CurrentSequence = sequence;
-                terminal.CurrentSequenceValidFromToInterval = GetCurrentTimeIntervalForSequence(sequence, targetTime);
-                sequenceChanged = true;
-                return sequence;
-            }
-            else
-            {
-                return terminal.CurrentSequence;
-            }
+            //default case
+            if (terminal.CurrentSequenceValidFromToInterval == null && 
+                terminal.CurrentSequence == null &&
+                terminal.ManualSequence == null)
+                return GetCurrentScheduleForTerminal(terminal, targetTime) ?? terminal.DefaultSequence;
+
+            //simply get new sequence if we're out of time interval, it doesn't matter what it is
+            if ((terminal.CurrentSequenceValidFromToInterval != null &&
+                 !manager.IsOverlappingWithExistingDate(terminal.CurrentSequenceValidFromToInterval, targetTime)))
+                return GetCurrentScheduleForTerminal(terminal, targetTime) ?? terminal.DefaultSequence;
+
+            return terminal.ManualSequence ?? terminal.CurrentSequence;
         }
 
         public TimeInterval GetCurrentTimeIntervalForSequence(TerminalSequence sequence, DateTime targetTime)

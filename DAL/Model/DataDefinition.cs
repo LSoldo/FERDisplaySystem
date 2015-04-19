@@ -62,6 +62,13 @@ namespace DAL.Model
             public static string MaxImage = "Maximage";
         }
 
+        public abstract class CurrentSequence
+        {
+            public static string ScheduledSequence = "Scheduled sequence";
+            public static string DefaultSequence = "Default sequence";
+            public static string ManualSequence = "Manual sequence";
+        }
+
         public abstract class SceneDefinition
         {
             public static string Path
