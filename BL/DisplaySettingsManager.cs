@@ -118,6 +118,7 @@ namespace BL
 
         public bool IsOverlappingWithExistingDate(TimeInterval scheduledTimes, DateTime newTime)
         {
+
             return scheduledTimes.TimeFrom <= newTime && newTime <= scheduledTimes.TimeTo;
         }
 
@@ -142,6 +143,5 @@ namespace BL
         {
             return JsonConvert.SerializeObject(times);
         }
-
     }
 }
