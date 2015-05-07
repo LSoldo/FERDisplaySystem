@@ -8,9 +8,18 @@ using DAL.Model;
 
 namespace BL
 {
-    public class TerminalManager
+    public class BLTerminalManager
     {
-
+        /// <summary>
+        /// Recalculates display times for specified terminal and checks if new times overlap with existing ones.
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="terminalSequence"></param>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        /// <param name="showEvery"></param>
+        /// <param name="consecutiveTimesToShow"></param>
+        /// <returns>Returns true if new calculated times don't overlap with existing ones, and false if they do.</returns>
         public bool RecalculateDisplayTimesForTerminal(Terminal terminal,
             TerminalSequence terminalSequence,
             DateTime startTime,
@@ -18,7 +27,7 @@ namespace BL
             TimeSpan? showEvery,
             int? consecutiveTimesToShow)
         {
-            var manager = new DisplaySettingsManager();
+            var manager = new BLDisplaySettingsManager();
 
             DisplaySetting setting;
             var newTimeIntervals = manager.CreateDisplayTimes(startTime, endTime, showEvery, consecutiveTimesToShow,
@@ -38,10 +47,15 @@ namespace BL
             terminalSequence.Setting = setting;
             return true;
         }
-
+        /// <summary>
+        /// Updates terminal with new sequence (if it changes) and returns current sequence.
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="targetTime"></param>
+        /// <returns>Returns currenct sequence</returns>
         public TerminalSequence UpdateTerminalSequenceAndGetCurrentSequence(Terminal terminal, DateTime targetTime)
         {
-            var manager = new DisplaySettingsManager();
+            var manager = new BLDisplaySettingsManager();
 
             //default case
             if (terminal.CurrentSequenceValidFromToInterval == null && terminal.CurrentSequence == null &&
@@ -82,10 +96,15 @@ namespace BL
                 return terminal.CurrentSequence = terminal.ManualSequence;
             return terminal.CurrentSequence;
         }
-
+        /// <summary>
+        /// Gets current sequence for specified terminal based on targetTime
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="targetTime"></param>
+        /// <returns>Current sequence for terminal</returns>
         public TerminalSequence GetCurrentSequence(Terminal terminal, DateTime targetTime)
         {
-            var manager = new DisplaySettingsManager();
+            var manager = new BLDisplaySettingsManager();
 
             //default case
             if (terminal.CurrentSequenceValidFromToInterval == null && 
@@ -113,7 +132,7 @@ namespace BL
 
         public TerminalSequence GetCurrentScheduleForTerminal(Terminal terminal, DateTime targetTime)
         {
-            var manager = new DisplaySettingsManager();
+            var manager = new BLDisplaySettingsManager();
             var sequences = terminal.AllSequences;
 
             foreach (var sequence in sequences)

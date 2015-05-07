@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace BL
 {
-    public class DisplaySettingsManager
+    public class BLDisplaySettingsManager
     {
         public List<TimeInterval> CreateDisplayTimes(
             DateTime startTime,

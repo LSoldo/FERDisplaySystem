@@ -88,6 +88,7 @@
     <Compile Include="Model\MaxImageSequence.cs" />
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DisplaySetting.cs" />
+    <Compile Include="Model\PowerPointScene.cs" />
     <Compile Include="Model\SequenceHistory.cs" />
     <Compile Include="Model\SequenceScene.cs" />
     <Compile Include="Model\Terminal.cs" />

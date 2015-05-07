@@ -19,6 +19,26 @@
 			"html5videoscene"
 		]
     },
+    "powerpointscene": {
+        "html": [
+            "<video id=\"video\" autoplay=\"autoplay\" loop=\"loop\" autobuffer=\"autobuffer\" muted=\"muted\" width=\"640\" height=\"360\">",
+            "<source src=\"{0}\" type=\"video/mp4\" />",
+            "<object type=\"application/x-shockwave-flash\" data=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" width=\"640\" height=\"360\">",
+            "<param name=\"movie\" value=\"http://releases.flowplayer.org/swf/flowplayer-3.2.1.swf\" />",
+            "<param name=\"allowFullScreen\" value=\"true\" />",
+            "<param name=\"wmode\" value=\"transparent\" />",
+            "</object>",
+            "</video>"
+        ],
+		"css": [
+            "http://localhost:11527/Content/html5video.css"
+		],
+		"js": [
+		],
+		"javascriptFunctions": [
+			"html5videoscene"
+		]
+    },
     "imageslideshow": {
         "html": [
             "<div id=\"maximage\">",

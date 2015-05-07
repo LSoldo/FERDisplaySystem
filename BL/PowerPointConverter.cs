@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.PowerPoint;
 using Microsoft.Office.Core;
@@ -15,27 +16,29 @@ namespace BL
         public string GetVideoFromPpt(string inputPath, string outputPath)
         {
             var app = new Microsoft.Office.Interop.PowerPoint.Application();
-            var presentation = app.Presentations.Open(inputPath, MsoTriState.msoTrue, MsoTriState.msoTrue, MsoTriState.msoFalse);
+            var presentation = app.Presentations.Open(inputPath, MsoTriState.msoFalse, MsoTriState.msoFalse, MsoTriState.msoFalse);
 
-            var mp4FileName = Guid.NewGuid() + ".wmv";
-            var fullpath = Path.Combine(outputPath, Path.GetFileName(inputPath));
+            var fileName = Guid.NewGuid() + ".mp4";
+            var fullpath = Path.Combine(outputPath, fileName);
 
             try
             {
-                presentation.CreateVideo(mp4FileName);
-                presentation.SaveCopyAs(fullpath, PpSaveAsFileType.ppSaveAsWMV, MsoTriState.msoCTrue);
+                presentation.CreateVideo(fullpath);
+                while (presentation.CreateVideoStatus == PpMediaTaskStatus.ppMediaTaskStatusInProgress)
+                    Thread.Sleep(100);
+
+                //presentation.SaveCopyAs(fullpath, PpSaveAsFileType.ppSaveAsMP4, MsoTriState.msoCTrue);               
             }
-            catch (COMException ex)
+            catch (COMException)
             {
-                mp4FileName = null;
-                throw new Exception("A message occured: " + ex.Message);
+                fileName = null;
             }
             finally
             {
+                presentation.Close();
                 app.Quit();
             }
-
-            return mp4FileName;
+            return fileName;
         }
     }
 }

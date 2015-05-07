@@ -38,7 +38,7 @@ namespace Web.Controllers
 
             var sequenceScene = new List<SequenceScene>
             {
-                new SequenceScene(rss, TimeSpan.FromMilliseconds(20000), true)
+                new SequenceScene(video, TimeSpan.FromMilliseconds(20000), true)
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
@@ -53,7 +53,7 @@ namespace Web.Controllers
 
         public ActionResult Calendar()
         {
-            var manager = new DisplaySettingsManager();
+            var manager = new BLDisplaySettingsManager();
             DisplaySetting setting;
             var data = manager.CreateDisplayTimes(DateTime.Now, DateTime.Now.AddHours(2), TimeSpan.FromHours(3), 5,
                 out setting);
