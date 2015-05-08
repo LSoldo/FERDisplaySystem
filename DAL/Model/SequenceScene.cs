@@ -15,7 +15,8 @@ namespace DAL.Model
         public string Description { get; set; }
         public virtual IScene Scene { get; set; }
         public virtual List<DataSource> Urls { get; set; }
-        [NotMapped] private SceneSetup sceneSetup;
+        [NotMapped] 
+        private SceneSetup sceneSetup;
         [NotMapped]
         public SceneSetup Setup
         {
