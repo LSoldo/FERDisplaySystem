@@ -9,7 +9,7 @@ namespace DAL.Factories
         public ISequence GetSequence(string type)
         {
             if (type == DataDefinition.SequenceType.MaxImage)
-                return new MaxImageSequence();
+                return new Sequence();
             else
                 throw new ArgumentException("CompositionFactory: Composition type argument not valid: {0}", type);
         }

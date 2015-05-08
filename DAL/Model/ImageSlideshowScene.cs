@@ -13,21 +13,15 @@ namespace DAL.Model
     {
         public int Id { get; set; }
         public string Type { get; private set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
         public List<string> JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
         public List<string> Js { get; set; }
         public bool IsCacheable { get; set; }
         public bool IsInitialized { get; private set; }
-        public void Init(string name, string description, List<string> urls, bool isCacheable)
+        public void Init()
         {
-            this.Name = name;
-            this.Description = description;
-            this.Urls = urls;
-            this.IsCacheable = isCacheable;
+            this.IsCacheable = true;
             this.Type = DataDefinition.SceneType.Slideshow;
             this.IsInitialized = true;
 
@@ -47,14 +41,10 @@ namespace DAL.Model
             {
                 using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
                 {
-                    ClearData();
-                    var builder = new PageBuilder();
+                    ClearData();                   
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
-                    this.HtmlContent = string.Format(
-                        string.Join("", definition.imageslideshow.html),
-                        string.Join("", builder.AddImg(this.Urls))
-                        );
+                    this.HtmlContent = string.Join("", definition.imageslideshow.html);
 
                     this.JavascriptFunctions = (definition.imageslideshow.javascriptFunctions).ToObject<List<string>>();
 
@@ -67,6 +57,22 @@ namespace DAL.Model
                 throw new Exception("Exception occured: " + ex.Message);
             }
             
+        }
+
+        public string GenerateHtmlContent(List<string> urls)
+        {
+            if (this.IsInitialized)
+            {
+                var builder = new PageBuilder();
+                return string.Format(
+                        this.HtmlContent,
+                        string.Join("", builder.AddImg(urls)));
+            }
+                
+            else
+            {
+                throw new Exception("Scene not initialized");
+            }
         }
     }
 }

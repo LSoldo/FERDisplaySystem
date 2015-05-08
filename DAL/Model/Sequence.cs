@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DAL.Model
 {
-    public class MaxImageSequence : ISequence
+    public class Sequence : ISequence
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -44,7 +44,7 @@ namespace DAL.Model
 
         private string BuildBodyContent(List<SequenceScene> scenes, string groupId)
         {
-            var htmlDefinitionsForScenes = scenes.Select(s => s.Scene.HtmlContent).ToList();
+            var htmlDefinitionsForScenes = scenes.Select(s => s.Setup.HtmlContent).ToList();
             var sceneIntervals = scenes.Select(scene => (long) scene.Duration.TotalMilliseconds).ToList();
 
             var outputContent = "";
@@ -65,17 +65,17 @@ namespace DAL.Model
 
             var sceneDedicatedFunctions =
                 builder.AddVarArray(
-                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.JavascriptFunctions.ConvertAll(i => "'" + i + "'"))).ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Setup.JsFunctionsToCall.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.CurrentFunctions);
 
             var cssPaths =
                 builder.AddVarArray(
-                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.Css.ConvertAll(i => "'" + i + "'"))).ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Setup.CssPathList.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.CssPathsArray);
 
             var jsPaths =
                 builder.AddVarArray(
-                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Scene.Js.ConvertAll(i => "'" + i + "'"))).ToList()),
+                    string.Join(",", scenes.Select(scene => builder.AddToArray(scene.Setup.JsPathList.ConvertAll(i => "'" + i + "'"))).ToList()),
                     DataDefinition.SequenceDefinition.JsPathsArray);
 
             var sequenceMainFunction = builder.AddJsScript(content + group + sequenceId + intervals + jsPaths + cssPaths + 

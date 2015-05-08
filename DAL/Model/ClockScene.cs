@@ -14,9 +14,6 @@ namespace DAL.Model
     {
         public int Id { get; set; }
         public string Type { get; private set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<string> Urls { get; set; }
         public string HtmlContent { get; private set; }
         public List<string> JavascriptFunctions { get; set; }
         public List<string> Css { get; set; }
@@ -24,12 +21,9 @@ namespace DAL.Model
         public bool IsCacheable { get; set; }
         public bool IsInitialized { get; private set; }
 
-        public void Init(string name, string description, List<string> urls, bool isCacheable)
+        public void Init()
         {
-            this.Name = name;
-            this.Description = description;
-            this.Urls = urls;
-            this.IsCacheable = isCacheable;
+            this.IsCacheable = false;
             this.Type = DataDefinition.SceneType.Clock;
             this.IsInitialized = true;
 
@@ -64,7 +58,16 @@ namespace DAL.Model
             {
                 throw new Exception("Exception occured: " + ex.Message);
             }
+        }
 
+        public string GenerateHtmlContent(List<string> urls)
+        {
+            if (this.IsInitialized)
+                return this.HtmlContent;
+            else
+            {
+                throw new Exception("Scene not initialized");
+            }
         }
     }
 }

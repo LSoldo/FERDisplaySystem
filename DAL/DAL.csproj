@@ -85,7 +85,7 @@
     <Compile Include="Interfaces\ISceneFactory.cs" />
     <Compile Include="Interfaces\ISequence.cs" />
     <Compile Include="Interfaces\ISequenceFactory.cs" />
-    <Compile Include="Model\MaxImageSequence.cs" />
+    <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DisplaySetting.cs" />
     <Compile Include="Model\PowerPointScene.cs" />

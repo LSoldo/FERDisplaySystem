@@ -26,19 +26,20 @@ namespace Web.Controllers
             var sceneFactory = new SceneFactory();
             var sequenceFactory = new SequenceFactory();
 
+            //new List<string>() { "http://www.fer.unizg.hr/feed/rss.php?url=/"}
             var rss = sceneFactory.GetScene(DataDefinition.SceneType.Rss);
-            rss.Init("ime", "opis", new List<string>() { "http://www.fer.unizg.hr/feed/rss.php?url=/" }, true);
+            rss.Init();
             rss.Id = 1;
 
             var video = sceneFactory.GetScene(DataDefinition.SceneType.Video);
-            video.Init("ime", "opis", new List<string>() { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4" }, true);
+            video.Init();
 
             var clock = sceneFactory.GetScene(DataDefinition.SceneType.Clock);
-            clock.Init("ime", "opis", new List<string>() { "" }, false);
+            clock.Init();
 
             var sequenceScene = new List<SequenceScene>
             {
-                new SequenceScene(video, TimeSpan.FromMilliseconds(20000), true)
+                new SequenceScene(video, new List<string>() { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}, TimeSpan.FromMilliseconds(20000), true, "video")
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
