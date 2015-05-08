@@ -78,13 +78,18 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DALTerminal.cs" />
+    <Compile Include="DisplayContext.cs" />
     <Compile Include="Model\ClockScene.cs" />
+    <Compile Include="Model\DataSource.cs" />
     <Compile Include="Model\Html5VideoScene.cs" />
+    <Compile Include="Model\HtmlWrapper.cs" />
     <Compile Include="Model\ImageSlideshowScene.cs" />
     <Compile Include="Interfaces\IScene.cs" />
     <Compile Include="Interfaces\ISceneFactory.cs" />
     <Compile Include="Interfaces\ISequence.cs" />
     <Compile Include="Interfaces\ISequenceFactory.cs" />
+    <Compile Include="Model\JsCodeWrapper.cs" />
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\DataDefinition.cs" />
     <Compile Include="Model\DisplaySetting.cs" />
@@ -98,11 +103,13 @@
     <Compile Include="Model\RssScene.cs" />
     <Compile Include="Factories\SceneFactory.cs" />
     <Compile Include="Factories\SequenceFactory.cs" />
+    <Compile Include="Utils\TypeConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="CompositionDefinition.json" />
     <None Include="packages.config" />
     <None Include="SceneDefinition.json" />

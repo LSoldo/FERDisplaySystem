@@ -8,21 +8,22 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ServiceModel.Syndication;
 using System.Xml;
+using DAL.Model;
 
 namespace DAL.Interfaces
 {
     public interface IScene
     {
         int Id { get; set; }
-        string Type { get; }       
+        string Type { get; }
         string HtmlContent { get; }
-        List<string> Css { get; set; }
-        List<string> Js { get; set; } 
-        List<string> JavascriptFunctions { get; }
+        List<DataSource> Css { get; set; }
+        List<DataSource> Js { get; set; }
+        List<JsCodeWrapper> JavascriptFunctions { get; }
         bool IsCacheable { get; }
         bool IsInitialized { get; }
         void Init();
         void Calculate();
-        string GenerateHtmlContent(List<string> urls);
+        string GenerateHtmlContent(List<DataSource> urls);
     }
 }

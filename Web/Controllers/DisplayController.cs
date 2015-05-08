@@ -16,6 +16,12 @@ namespace Web.Controllers
 {
     public class DisplayController : Controller
     {
+        private IHubContext context;
+
+        public DisplayController()
+        {
+            this.context = GlobalHost.ConnectionManager.GetHubContext<ConnectionHub>();
+        }
         public ActionResult Index()
         {
             return View();
@@ -39,15 +45,12 @@ namespace Web.Controllers
 
             var sequenceScene = new List<SequenceScene>
             {
-                new SequenceScene(video, new List<string>() { "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}, TimeSpan.FromMilliseconds(20000), true, "video")
+                new SequenceScene(video, new List<DataSource>() {new DataSource(){Path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}, TimeSpan.FromMilliseconds(20000), true, "video")
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
             sequence.Init("Sekvenca", "opis", sequenceScene);
             sequence.Id = 1;
-
-            //var converter = new PowerPointConverter();
-            //converter.GetVideoFromPpt(@"C:\Users\Luka\Downloads\flip.ppt", @"C:\Users\Luka\Desktop");
 
             return Content(sequence.GenerateHtml(id));
         }

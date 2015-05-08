@@ -8,7 +8,6 @@ namespace DAL.Model
 {
     public class DisplaySetting
     {
-        //public string DisplayPeriod { get; set; }
         public int Id { get; set; }
         public DateTime InsertionTs { get; set; }
         public DateTime StartTime { get; set; }

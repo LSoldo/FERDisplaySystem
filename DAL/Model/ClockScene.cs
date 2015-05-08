@@ -15,9 +15,9 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Type { get; private set; }
         public string HtmlContent { get; private set; }
-        public List<string> JavascriptFunctions { get; set; }
-        public List<string> Css { get; set; }
-        public List<string> Js { get; set; }
+        public virtual List<JsCodeWrapper> JavascriptFunctions { get; set; }
+        public virtual List<DataSource> Css { get; set; }
+        public virtual List<DataSource> Js { get; set; }
         public bool IsCacheable { get; set; }
         public bool IsInitialized { get; private set; }
 
@@ -49,9 +49,9 @@ namespace DAL.Model
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
                     this.HtmlContent = string.Join("", definition.clock.html);
-                    this.JavascriptFunctions = (definition.clock.javascriptFunctions).ToObject<List<string>>();
-                    this.Css = (definition.clock.css).ToObject<List<string>>();
-                    this.Js = (definition.clock.js).ToObject<List<string>>();
+                    this.JavascriptFunctions = TypeConverter.ConvertToJsCodeWrapper((definition.clock.javascriptFunctions).ToObject<List<string>>());
+                    this.Css = TypeConverter.ConvertToDataSource((definition.clock.css).ToObject<List<string>>());
+                    this.Js = TypeConverter.ConvertToDataSource((definition.clock.js).ToObject<List<string>>());
                 }
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace DAL.Model
             }
         }
 
-        public string GenerateHtmlContent(List<string> urls)
+        public string GenerateHtmlContent(List<DataSource> urls)
         {
             if (this.IsInitialized)
                 return this.HtmlContent;

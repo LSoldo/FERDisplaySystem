@@ -14,11 +14,11 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public List<string> Css { get; private set; }
-        public List<string> Js { get; private set; }
+        public virtual List<DataSource> Css { get; private set; }
+        public virtual List<DataSource> Js { get; private set; }
         public string JavascriptFunctions { get; private set; }
         public string Type { get; private set; }
-        public List<SequenceScene> Scenes { get; set; }
+        public virtual List<SequenceScene> Scenes { get; set; }
 
         public string GenerateHtml(string groupId)
         {
@@ -30,11 +30,11 @@ namespace DAL.Model
                 var json = r.ReadToEnd();
                 dynamic definition = JObject.Parse(json);
 
-                this.Css = definition.maximage.css.ToObject<List<string>>();
-                this.Js = definition.maximage.js.ToObject<List<string>>();
+                this.Css = TypeConverter.ConvertToDataSource((definition.maximage.css).ToObject<List<string>>());
+                this.Js = TypeConverter.ConvertToDataSource((definition.maximage.js).ToObject<List<string>>());
 
                 htmlContent += builder.AddHtml5Declaration();
-                var headContent = builder.BuildHeadContent(this.Css, this.Js);
+                var headContent = builder.BuildHeadContent(this.Css.Select(s => s.Path).ToList(), this.Js.Select(s => s.Path).ToList());
                 var bodyContent = BuildBodyContent(this.Scenes, groupId);
                 htmlContent += builder.AddHtmlTags(headContent + bodyContent);
 
@@ -103,9 +103,5 @@ namespace DAL.Model
             this.Type = DataDefinition.SequenceType.MaxImage;
         }
 
-        public void Add(SequenceScene scene)
-        {
-            this.Scenes.Add(scene);
-        }
     }
 }

@@ -12,15 +12,17 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
-        public TerminalSequence CurrentSequence { get; set; }
-        public TerminalSequence ManualSequence { get; set; }
-        public TerminalSequence DefaultSequence { get; set; }
-        public List<TerminalSequence> AllSequences { get; set; }
-        public TimeInterval CurrentSequenceValidFromToInterval { get; set; }
+        public bool Active { get; set; }
+        public virtual TerminalSequence CurrentSequence { get; set; }
+        public virtual TerminalSequence ManualSequence { get; set; }
+        public virtual TerminalSequence DefaultSequence { get; set; }
+        public virtual List<TerminalSequence> AllSequences { get; set; }
+        public virtual TimeInterval CurrentSequenceValidFromToInterval { get; set; }
 
         public Terminal()
         {
             this.AllSequences = new List<TerminalSequence>();
+            this.Active = false;
         }
 
     }

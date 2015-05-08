@@ -17,7 +17,7 @@ namespace BL
         {
             this.settingsManager = new BLDisplaySettingsManager();
         }
-        public SequenceScene CreateScene(string sceneType, string sceneName, List<string> urls, TimeSpan duration, bool cleanCache)
+        public SequenceScene CreateScene(string sceneType, string sceneName, List<DataSource> urls, TimeSpan duration, bool cleanCache)
         {
             ISceneFactory factory = new SceneFactory();
             IScene scene = factory.GetScene(sceneType);
@@ -28,8 +28,11 @@ namespace BL
             {
                 var converter = new PowerPointConverter();
                 //TODO add output path
-                var convertedUrl = converter.GetVideoFromPpt(urls.FirstOrDefault(), "output");
-                seqScene = new SequenceScene(scene, new List<string>(){convertedUrl}, duration, cleanCache, sceneName);
+                var convertedUrl = new DataSource()
+                {
+                    Path = converter.GetVideoFromPpt(urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path, "output")
+                };
+                seqScene = new SequenceScene(scene, new List<DataSource>(){convertedUrl}, duration, cleanCache, sceneName);
             }
             else
             {

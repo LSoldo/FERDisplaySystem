@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,13 +13,19 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public IScene Scene { get; set; }
-        public List<string> Urls { get; set; } 
-        public SceneSetup Setup { get; set; }
+        public virtual IScene Scene { get; set; }
+        public virtual List<DataSource> Urls { get; set; }
+        [NotMapped] private SceneSetup sceneSetup;
+        [NotMapped]
+        public SceneSetup Setup
+        {
+            get { return sceneSetup ?? (sceneSetup = MapToSceneSetup()); }
+            set { sceneSetup = value; }
+        }
         public TimeSpan Duration { get; set; }
         public bool ShouldCleanCache { get; set; }
 
-        public SequenceScene(IScene scene, List<string> urls, TimeSpan duration, bool cleanCache, string name)
+        public SequenceScene(IScene scene, List<DataSource> urls, TimeSpan duration, bool cleanCache, string name)
         {
             this.Scene = scene;
             this.Urls = urls;
@@ -36,19 +43,20 @@ namespace DAL.Model
 
     public class SceneSetup
     {
+        public int Id { get; set; }
         public string HtmlContent { get; set; }
         public long Interval { get; set; }
         public List<string> JsFunctionsToCall { get; set; }
         public List<string> JsPathList { get; set; }
         public List<string> CssPathList { get; set; }
 
-        public SceneSetup(IScene scene, List<string> urls, TimeSpan duration)
+        public SceneSetup(IScene scene, List<DataSource> urls, TimeSpan duration)
         {
             this.HtmlContent = scene.GenerateHtmlContent(urls);
             this.Interval = (long)duration.TotalMilliseconds;
-            this.JsFunctionsToCall = scene.JavascriptFunctions;
-            this.JsPathList = scene.Js;
-            this.CssPathList = scene.Css;
+            this.JsFunctionsToCall = scene.JavascriptFunctions.Select(s => s.Code).ToList();
+            this.JsPathList = scene.Js.Select(s => s.Path).ToList();
+            this.CssPathList = scene.Css.Select(s => s.Path).ToList();
         }
     }
 }

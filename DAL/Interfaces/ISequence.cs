@@ -21,13 +21,12 @@ namespace DAL.Interfaces
         int Id { get; set; }
         string Name { get; set; }
         string Description { get; }
-        List<string> Css { get; }
-        List<string> Js { get; }
+        List<DataSource> Css { get; }
+        List<DataSource> Js { get; }
         string JavascriptFunctions { get; }
         string Type { get; }
         List<SequenceScene> Scenes { get; set; }
         string GenerateHtml(string groupId);
-        void Add(SequenceScene scene);
         void Init(string name, string description, List<SequenceScene> scenes);
     }
 
