@@ -25,7 +25,7 @@ namespace BL
             return times;
         }
 
-        public void CalculateDisplaySettingAdditionalProperties(ref DisplaySetting setting, List<TimeInterval> times)
+        private void CalculateDisplaySettingAdditionalProperties(ref DisplaySetting setting, List<TimeInterval> times)
         {
             if (setting.ShowEvery.HasValue && (setting.ConsecutiveTimesToShow == null || setting.ConsecutiveTimesToShow == 0))
                 setting.ValidUntil = DateTime.MaxValue;
@@ -66,7 +66,7 @@ namespace BL
             };
         }
 
-        private static List<TimeInterval> CreateDisplayTimes(DisplaySetting setting)
+        public List<TimeInterval> CreateDisplayTimes(DisplaySetting setting)
         {
             var intervals = new List<TimeInterval>();
 

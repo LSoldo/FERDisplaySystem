@@ -97,6 +97,47 @@ namespace BL
             return terminal.CurrentSequence;
         }
         /// <summary>
+        /// Overrides current sequence and sets manual sequence
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="manualSequence"></param>
+        /// <param name="showFromToInterval"></param>
+        public void SetManualSequenceForTerminal(Terminal terminal, TerminalSequence manualSequence, TimeInterval showFromToInterval = null)
+        {
+            terminal.CurrentSequenceValidFromToInterval = null;
+            if (showFromToInterval != null)
+            {
+                showFromToInterval.TimeFrom = DateTime.Now;
+                if (showFromToInterval.TimeFrom >= showFromToInterval.TimeTo)
+                    throw new Exception("'Time to' must be placed somewhere in the future");
+                terminal.CurrentSequenceValidFromToInterval = showFromToInterval;
+            }
+            terminal.ManualSequence = manualSequence;
+            terminal.CurrentSequence = null;
+            //TODO ORM save
+            //TODO update group SignalR
+        }
+        /// <summary>
+        /// Sets default sequence for terminal
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="defaultSequence"></param>
+        public void SetDefaultSequenceForTerminal(Terminal terminal, TerminalSequence defaultSequence)
+        {
+            terminal.DefaultSequence = defaultSequence;
+            //TODO ORM
+        }
+        /// <summary>
+        /// Adds sequence to terminal
+        /// </summary>
+        /// <param name="terminal"></param>
+        /// <param name="sequence"></param>
+        public void AddSequenceToTerminal(Terminal terminal, TerminalSequence sequence)
+        {
+            terminal.AllSequences.Add(sequence);
+            //TODO ORM
+        }
+        /// <summary>
         /// Gets current sequence for specified terminal based on targetTime
         /// </summary>
         /// <param name="terminal"></param>

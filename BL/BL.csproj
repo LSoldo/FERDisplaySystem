@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BLDisplaySettingsManager.cs" />
-    <Compile Include="BLSceneManager.cs" />
+    <Compile Include="BLSequenceManager.cs" />
     <Compile Include="PowerPointConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BLTerminalManager.cs" />
