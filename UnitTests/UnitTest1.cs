@@ -95,6 +95,27 @@ namespace UnitTests
             dalScene.UpdateSequenceScene(seqScene);
             dalScene.Dispose();
             Assert.IsTrue(true);
-        } 
+        }
+
+        [TestMethod]
+        public void DeleteSequenceScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            dalScene.RemoveSequenceScene(1);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+
+        public void GetSequenceSceneBySceneType_Success()
+        {
+            var dalScene = new DALScene();
+
+            var scene = dalScene.GetSequenceSceneBySceneType(DataDefinition.SceneType.Slideshow);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace DAL.Model
         public TimeSpan Duration { get; set; }
         public bool ShouldCleanCache { get; set; }
 
-        protected SequenceScene() { }
+        public SequenceScene() { }
 
         /// <summary>
         /// Constructor which generates scene setup
