@@ -14,7 +14,7 @@ namespace DAL.Model
         public string SequenceType { get; private set; }
         public List<SequenceScene> SequenceScenes { get; set; }
 
-        protected Sequence()
+        public Sequence()
         {
         }
 

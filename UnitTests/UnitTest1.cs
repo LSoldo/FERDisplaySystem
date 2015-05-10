@@ -138,10 +138,32 @@ namespace UnitTests
         }
 
         [TestMethod]
-        public void GetSequence_Success()
+        public void RemoveSequence_Success()
         {
             var dalSequence = new DALSequence();
             var seq = dalSequence.GetSequenceById(3);
+            dalSequence.RemoveSequence(seq);
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void UpdateSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            var seq = dalSequence.GetSequenceById(1);
+            seq.Name = "Moja sekvenca";
+            dalSequence.UpdateSequence(seq);
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void RemoveSequence2_Success()
+        {
+            var dalSequence = new DALSequence();
+            var seq = dalSequence.GetSequenceById(2);
+            dalSequence.RemoveSequence(seq);
             dalSequence.Dispose();
             Assert.IsTrue(true);
         }
