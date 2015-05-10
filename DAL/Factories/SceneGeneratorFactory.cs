@@ -15,7 +15,7 @@ namespace DAL.Factories
             if(type == DataDefinition.SceneType.Video)
                 return new Html5VideoSceneGenerator();
             else if(type == DataDefinition.SceneType.Slideshow)
-                return new ImageSlideshowScene();
+                return new ImageSlideshowSceneGenerator();
             else if(type == DataDefinition.SceneType.Rss)
                 return new RssSceneGenerator();
             else if (type == DataDefinition.SceneType.Clock)

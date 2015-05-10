@@ -11,7 +11,10 @@ namespace DAL
 {
     public class DisplayContext : DbContext
     {
-        public DisplayContext() : base("FERDisplaySystem") { }
+        public DisplayContext() : base("FERDisplaySystem")
+        {
+            Database.SetInitializer(new DropDbInit());
+        }
 
         public DbSet<Terminal> Terminals { get; set; }
         public DbSet<TerminalSequence> TerminalSequences { get; set; }
@@ -23,4 +26,9 @@ namespace DAL
         public DbSet<TimeInterval> TimeIntervals { get; set; }
 
     }
+
+    public class DropDbInit : DropCreateDatabaseIfModelChanges<DisplayContext>
+    {
+    }
+    
 }

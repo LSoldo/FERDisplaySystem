@@ -37,10 +37,10 @@ namespace UnitTests
             DALScene dalScene = new DALScene();
 
             var list = new List<DataSource>()
-                {
-                    new DataSource() {Path = "http://www.yahoo.hr"},
-                    new DataSource() {Path = "http://www.net.com"}
-                };
+            {
+                new DataSource() {Path = "http://www.yahoo.hr"},
+                new DataSource() {Path = "http://www.net.com"}
+            };
 
             var scene = new Scene("moja scena", DataDefinition.SceneType.Slideshow, list) {Description = "Desc", Id = 1};
 
@@ -48,6 +48,7 @@ namespace UnitTests
             dalScene.Dispose();
             Assert.IsTrue(true);
         }
+
         [TestMethod]
         public void DeactivateScene_Success()
         {
@@ -83,6 +84,7 @@ namespace UnitTests
             dalScene.Dispose();
             Assert.IsTrue(id > 0);
         }
+
         [TestMethod]
         public void UpdateSequenceScene_Success()
         {
@@ -108,7 +110,6 @@ namespace UnitTests
         }
 
         [TestMethod]
-
         public void GetSequenceSceneBySceneType_Success()
         {
             var dalScene = new DALScene();
@@ -117,5 +118,33 @@ namespace UnitTests
             dalScene.Dispose();
             Assert.IsTrue(true);
         }
+
+        [TestMethod]
+        public void AddSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            var dalScene = new DALScene();
+
+            var scene = dalScene.GetSceneById(1);
+            var seqScene = new SequenceScene(scene, TimeSpan.FromHours(2), true);
+            var seqScene2 = new SequenceScene(scene, TimeSpan.FromMinutes(10), true);
+            var seqList = new List<SequenceScene>() {seqScene, seqScene2};
+
+            var sequence = new Sequence("Sekvenca za pamćenje", DataDefinition.SequenceType.MaxImage, seqList);
+            int id = dalSequence.AddSequence(sequence);
+            dalScene.Dispose();
+            dalSequence.Dispose();
+            Assert.IsTrue(id > 0);
+        }
+
+        [TestMethod]
+        public void GetSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            var seq = dalSequence.GetSequenceById(3);
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
     }
 }

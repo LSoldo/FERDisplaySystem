@@ -79,12 +79,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DALScene.cs" />
+    <Compile Include="DALSequence.cs" />
     <Compile Include="DALTerminal.cs" />
     <Compile Include="DisplayContext.cs" />
     <Compile Include="Model\ClockSceneGenerator.cs" />
     <Compile Include="Model\DataSource.cs" />
     <Compile Include="Model\Html5VideoSceneGenerator.cs" />
-    <Compile Include="Model\ImageSlideshowScene.cs" />
+    <Compile Include="Model\ImageSlideshowSceneGenerator.cs" />
     <Compile Include="Interfaces\ISceneGenerator.cs" />
     <Compile Include="Interfaces\ISceneGeneratorFactory.cs" />
     <Compile Include="Interfaces\ISequenceGenerator.cs" />

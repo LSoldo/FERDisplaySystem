@@ -12,7 +12,7 @@ namespace DAL.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public string SequenceType { get; private set; }
-        public List<SequenceScene> Scenes { get; set; }
+        public List<SequenceScene> SequenceScenes { get; set; }
 
         protected Sequence()
         {
@@ -22,15 +22,15 @@ namespace DAL.Model
         {           
             this.Name = name;
             this.SequenceType = sequenceType;
-            this.Scenes = scenes;
+            this.SequenceScenes = scenes;
         }
         //facade
         public string GenerateHtml(string generatorType, string groupId, string terminalSequenceId)
         {
-            if(this.Scenes == null)
+            if(this.SequenceScenes == null)
                 throw new Exception("Scenes are null for sequence id " + this.Id);
             var sequence = new SequenceGeneratorFactory().GetSequence(generatorType ?? this.SequenceType);
-            return sequence.GenerateHtml(this.Scenes.Where(s => s.Scene.Active).ToList(), groupId, terminalSequenceId);
+            return sequence.GenerateHtml(this.SequenceScenes.Where(s => s.Scene.Active).ToList(), groupId, terminalSequenceId);
         }
 
 

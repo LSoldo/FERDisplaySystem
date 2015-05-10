@@ -13,7 +13,9 @@ namespace DAL.Model
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public virtual Scene Scene { get; set; }
+        [ForeignKey("SceneId")]
+        public virtual Scene Scene { get; set; }       
+        public int SceneId { get; set; }
         [NotMapped] 
         private SceneSetup sceneSetup;
         [NotMapped]

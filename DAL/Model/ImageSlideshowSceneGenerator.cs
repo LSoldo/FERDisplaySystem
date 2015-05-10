@@ -9,7 +9,7 @@ using DAL.Utils;
 using Newtonsoft.Json.Linq;
 namespace DAL.Model
 {
-    public class ImageSlideshowScene : ISceneGenerator
+    public class ImageSlideshowSceneGenerator : ISceneGenerator
     {
         public int Id { get; set; }
         public string Type { get; private set; }
