@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace DAL.Interfaces
 {
-    public interface ISequenceFactory
+    public interface ISequenceGeneratorFactory
     {
-        ISequence GetSequence(string type);
+        ISequenceGenerator GetSequence(string type);
     }
 }

@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DAL.Model
 {
-    public class RssScene : IScene
+    public class RssSceneGenerator : ISceneGenerator
     {
         public int Id { get; set; }
         public string Type { get; private set; }
@@ -65,35 +65,31 @@ namespace DAL.Model
 
         public string GenerateHtmlContent(List<DataSource> urls)
         {
-            if (this.IsInitialized)
+            if (!this.IsInitialized)
+                Init();
+
+            var builder = new PageBuilder();
+            var reader = XmlReader.Create(urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path);
+            var feed = SyndicationFeed.Load(reader);
+            reader.Close();
+
+            if (feed != null)
             {
-                var builder = new PageBuilder();
-                var reader = XmlReader.Create(urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path);
-                var feed = SyndicationFeed.Load(reader);
-                reader.Close();
-
-                if (feed != null)
+                var rssContent = "";
+                var i = 0;
+                foreach (var item in feed.Items)
                 {
-                    var rssContent = "";
-                    var i = 0;
-                    foreach (var item in feed.Items)
-                    {
-                        var subject = builder.AddH1(item.Title.Text);
-                        var content = (subject + item.Summary.Text).Replace("\n", "").Replace("&nbsp", "&#160");
+                    var subject = builder.AddH1(item.Title.Text);
+                    var content = (subject + item.Summary.Text).Replace("\n", "").Replace("&nbsp", "&#160");
 
-                        rssContent += builder.AddDivWithId(content,
-                            DataDefinition.SequenceDefinition.RssSequenceDivId + i);
-                        i++;
-                    }
-                    return string.Format(this.HtmlContent, rssContent);
+                    rssContent += builder.AddDivWithId(content,
+                        DataDefinition.SequenceDefinition.RssSequenceDivId + i);
+                    i++;
                 }
-                else
-                    throw new Exception("RSS feed not available");
+                return string.Format(this.HtmlContent, rssContent);
             }
             else
-            {
-                throw new Exception("Scene is not initialized");
-            }
+                throw new Exception("RSS feed not available");
         }
     }
 }

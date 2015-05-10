@@ -8,18 +8,18 @@ using DAL.Model;
 
 namespace DAL.Factories
 {
-    public class SceneFactory : ISceneFactory
+    public class SceneGeneratorFactory : ISceneGeneratorFactory
     {
-        public IScene GetScene(string type)
+        public ISceneGenerator GetScene(string type)
         {
             if(type == DataDefinition.SceneType.Video)
-                return new Html5VideoScene();
+                return new Html5VideoSceneGenerator();
             else if(type == DataDefinition.SceneType.Slideshow)
                 return new ImageSlideshowScene();
             else if(type == DataDefinition.SceneType.Rss)
-                return new RssScene();
+                return new RssSceneGenerator();
             else if (type == DataDefinition.SceneType.Clock)
-                return new ClockScene();
+                return new ClockSceneGenerator();
             else
                 throw new ArgumentException("SceneFactory: Scene type argument not valid: {0}", type);
         }

@@ -19,10 +19,6 @@ namespace BL
         }
         public SequenceScene CreateScene(string sceneType, string sceneName, List<DataSource> urls, TimeSpan duration, bool cleanCache)
         {
-            ISceneFactory factory = new SceneFactory();
-            IScene scene = factory.GetScene(sceneType);
-            scene.Init();
-
             SequenceScene seqScene = null;
             if (sceneType == DataDefinition.SceneType.PowerPoint)
             {
@@ -32,26 +28,17 @@ namespace BL
                 {
                     Path = converter.GetVideoFromPpt(urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path, "output")
                 };
-                seqScene = new SequenceScene(scene, new List<DataSource>(){convertedUrl}, duration, cleanCache, sceneName);
+                seqScene = new SequenceScene(new Scene(sceneName, sceneType, new List<DataSource>() { convertedUrl }) , duration, cleanCache );
             }
             else
             {
-                seqScene = new SequenceScene(scene, urls, duration, cleanCache, sceneName);
+                seqScene = new SequenceScene(new Scene(sceneName, sceneType, urls), duration, cleanCache);
             }
              
             return seqScene;
         }
 
-        public ISequence CreateSequence(string sequenceType, string sequenceName, string sequenceDescription, List<SequenceScene> scenes)
-        {
-            ISequenceFactory factory = new SequenceFactory();
-            ISequence sequence = factory.GetSequence(sequenceType);
-
-            sequence.Init(sequenceName,sequenceDescription, scenes);
-            return sequence;
-        }
-
-        public TerminalSequence CreateTerminalSequence(Terminal terminal, ISequence sequence, DisplaySetting setting)
+        public TerminalSequence CreateTerminalSequence(Terminal terminal, Sequence sequence, DisplaySetting setting)
         {
             var terminalSequence = new TerminalSequence(sequence, setting, terminal.Id.ToString());
             var times = settingsManager.CreateDisplayTimes(setting);

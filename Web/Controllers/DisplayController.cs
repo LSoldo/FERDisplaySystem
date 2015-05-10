@@ -29,8 +29,8 @@ namespace Web.Controllers
 
         public ActionResult Terminal(string id)
         {
-            var sceneFactory = new SceneFactory();
-            var sequenceFactory = new SequenceFactory();
+            var sceneFactory = new SceneGeneratorFactory();
+            var sequenceFactory = new SequenceGeneratorFactory();
 
             //new List<string>() { "http://www.fer.unizg.hr/feed/rss.php?url=/"}
             var rss = sceneFactory.GetScene(DataDefinition.SceneType.Rss);
@@ -43,16 +43,17 @@ namespace Web.Controllers
             var clock = sceneFactory.GetScene(DataDefinition.SceneType.Clock);
             clock.Init();
 
+            var scene = new Scene("video", video.Type, new List<DataSource>() {new DataSource(){Path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}});
             var sequenceScene = new List<SequenceScene>
             {
-                new SequenceScene(video, new List<DataSource>() {new DataSource(){Path = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"}}, TimeSpan.FromMilliseconds(20000), true, "video")
+                new SequenceScene(scene, TimeSpan.FromMilliseconds(20000), true)
             };
 
             var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
-            sequence.Init("Sekvenca", "opis", sequenceScene);
+            sequence.Init();
             sequence.Id = 1;
 
-            return Content(sequence.GenerateHtml(id));
+            return Content(sequence.GenerateHtml(sequenceScene, id, "1"));
         }
 
         public ActionResult Calendar()

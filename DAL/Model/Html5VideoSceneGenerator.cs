@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DAL.Model
 {
-    public class ClockScene : IScene
+    public class Html5VideoSceneGenerator : ISceneGenerator
     {
         public int Id { get; set; }
         public string Type { get; private set; }
@@ -20,16 +20,14 @@ namespace DAL.Model
         public virtual List<DataSource> Js { get; set; }
         public bool IsCacheable { get; set; }
         public bool IsInitialized { get; private set; }
-
         public void Init()
         {
             this.IsCacheable = false;
-            this.Type = DataDefinition.SceneType.Clock;
+            this.Type = DataDefinition.SceneType.Video;
             this.IsInitialized = true;
 
             Calculate();
         }
-
         private void ClearData()
         {
             this.Css = null;
@@ -37,7 +35,6 @@ namespace DAL.Model
             this.JavascriptFunctions = null;
             this.HtmlContent = "";
         }
-
         public void Calculate()
         {
             try
@@ -45,29 +42,27 @@ namespace DAL.Model
                 using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
                 {
                     ClearData();
-
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
-                    this.HtmlContent = string.Join("", definition.clock.html);
-                    this.JavascriptFunctions = TypeConverter.ConvertToJsCodeWrapper((definition.clock.javascriptFunctions).ToObject<List<string>>());
-                    this.Css = TypeConverter.ConvertToDataSource((definition.clock.css).ToObject<List<string>>());
-                    this.Js = TypeConverter.ConvertToDataSource((definition.clock.js).ToObject<List<string>>());
+                    this.HtmlContent = string.Join("", definition.html5videoscene.html);
+                    this.JavascriptFunctions =
+                        TypeConverter.ConvertToJsCodeWrapper((definition.html5videoscene.javascriptFunctions).ToObject<List<string>>());
+                    this.Css = TypeConverter.ConvertToDataSource(definition.html5videoscene.css.ToObject<List<string>>());
+                    this.Js = TypeConverter.ConvertToDataSource(definition.html5videoscene.js.ToObject<List<string>>());
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("Exception occured: " + ex.Message);
+                throw new Exception("An exception occured: " + ex.Message);
             }
         }
 
         public string GenerateHtmlContent(List<DataSource> urls)
         {
-            if (this.IsInitialized)
-                return this.HtmlContent;
-            else
-            {
-                throw new Exception("Scene not initialized");
-            }
+            if (!this.IsInitialized)
+                Init();
+                
+            return string.Format(this.HtmlContent, urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path);
         }
     }
 }

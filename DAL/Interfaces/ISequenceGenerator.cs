@@ -16,18 +16,16 @@ namespace DAL.Interfaces
         public DateTime TimeFrom { get; set; }
         public DateTime TimeTo { get; set; }
     }
-    public interface ISequence
+    public interface ISequenceGenerator
     {
         int Id { get; set; }
-        string Name { get; set; }
-        string Description { get; }
         List<DataSource> Css { get; }
         List<DataSource> Js { get; }
         string JavascriptFunctions { get; }
         string Type { get; }
-        List<SequenceScene> Scenes { get; set; }
-        string GenerateHtml(string groupId);
-        void Init(string name, string description, List<SequenceScene> scenes);
+        bool IsInitialized { get; set; }
+        string GenerateHtml(List<SequenceScene> scenes, string groupId, string terminalSequenceId);
+        void Init();
     }
 
 }

@@ -9,7 +9,7 @@ using DAL.Utils;
 using Newtonsoft.Json.Linq;
 namespace DAL.Model
 {
-    public class ImageSlideshowScene : IScene
+    public class ImageSlideshowScene : ISceneGenerator
     {
         public int Id { get; set; }
         public string Type { get; private set; }
@@ -57,19 +57,17 @@ namespace DAL.Model
                 throw new Exception("Exception occured: " + ex.Message);
             }          
         }
+
         public string GenerateHtmlContent(List<DataSource> urls)
         {
-            if (this.IsInitialized)
-            {
-                var builder = new PageBuilder();
-                return string.Format(
-                        this.HtmlContent,
-                        string.Join("", builder.AddImg(urls.Select(s => s.Path).ToList())));
-            }                
-            else
-            {
-                throw new Exception("Scene not initialized");
-            }
+            if (!this.IsInitialized)
+                Init();
+
+            var builder = new PageBuilder();
+            return string.Format(
+                this.HtmlContent,
+                string.Join("", builder.AddImg(urls.Select(s => s.Path).ToList())));
+
         }
     }
 }

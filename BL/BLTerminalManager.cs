@@ -20,13 +20,14 @@ namespace BL
         /// <param name="showEvery"></param>
         /// <param name="consecutiveTimesToShow"></param>
         /// <returns>Returns true if new calculated times don't overlap with existing ones, and false if they do.</returns>
-        public bool RecalculateDisplayTimesForTerminal(Terminal terminal,
+        public bool EditDisplayTimesForTerminalSequence(Terminal terminal,
             TerminalSequence terminalSequence,
             DateTime startTime,
             DateTime endTime,
             TimeSpan? showEvery,
             int? consecutiveTimesToShow)
         {
+            //TODO ORM
             var manager = new BLDisplaySettingsManager();
 
             DisplaySetting setting;
@@ -47,6 +48,7 @@ namespace BL
             terminalSequence.Setting = setting;
             return true;
         }
+
         /// <summary>
         /// Updates terminal with new sequence (if it changes) and returns current sequence.
         /// </summary>
@@ -55,6 +57,7 @@ namespace BL
         /// <returns>Returns currenct sequence</returns>
         public TerminalSequence UpdateTerminalSequenceAndGetCurrentSequence(Terminal terminal, DateTime targetTime)
         {
+            //TODO ORM
             var manager = new BLDisplaySettingsManager();
 
             //default case
@@ -145,6 +148,7 @@ namespace BL
         /// <returns>Current sequence for terminal</returns>
         public TerminalSequence GetCurrentSequence(Terminal terminal, DateTime targetTime)
         {
+            //TODO ORM load
             var manager = new BLDisplaySettingsManager();
 
             //default case

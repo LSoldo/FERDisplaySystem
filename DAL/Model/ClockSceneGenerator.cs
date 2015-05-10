@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace DAL.Model
 {
-    public class PowerPointScene : IScene
+    public class ClockSceneGenerator : ISceneGenerator
     {
         public int Id { get; set; }
         public string Type { get; private set; }
@@ -24,7 +24,7 @@ namespace DAL.Model
         public void Init()
         {
             this.IsCacheable = false;
-            this.Type = DataDefinition.SceneType.PowerPoint;
+            this.Type = DataDefinition.SceneType.Clock;
             this.IsInitialized = true;
 
             Calculate();
@@ -45,29 +45,27 @@ namespace DAL.Model
                 using (var r = new StreamReader(DataDefinition.SceneDefinition.Path))
                 {
                     ClearData();
+
                     var json = r.ReadToEnd();
                     dynamic definition = JObject.Parse(json);
-                    this.HtmlContent = string.Join("", definition.powerpointscene.html);
-                    this.JavascriptFunctions =
-                        TypeConverter.ConvertToJsCodeWrapper((definition.powerpointscene.javascriptFunctions).ToObject<List<string>>());
-                    this.Css = TypeConverter.ConvertToDataSource((definition.powerpointscene.css).ToObject<List<string>>());
-                    this.Js = TypeConverter.ConvertToDataSource((definition.powerpointscene.js).ToObject<List<string>>());
+                    this.HtmlContent = string.Join("", definition.clock.html);
+                    this.JavascriptFunctions = TypeConverter.ConvertToJsCodeWrapper((definition.clock.javascriptFunctions).ToObject<List<string>>());
+                    this.Css = TypeConverter.ConvertToDataSource((definition.clock.css).ToObject<List<string>>());
+                    this.Js = TypeConverter.ConvertToDataSource((definition.clock.js).ToObject<List<string>>());
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception("An exception occured: " + ex.StackTrace);
+                throw new Exception("Exception occured: " + ex.Message);
             }
         }
 
         public string GenerateHtmlContent(List<DataSource> urls)
         {
-            if (this.IsInitialized)
-                return string.Format(this.HtmlContent, urls.FirstOrDefault() == null ? "" : urls.FirstOrDefault().Path);
-            else
-            {
-                throw new Exception("Scene not initialized");
-            }
+            if (!this.IsInitialized)
+                Init();
+            
+            return this.HtmlContent;
         }
     }
 }

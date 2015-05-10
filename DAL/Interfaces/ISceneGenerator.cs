@@ -12,7 +12,7 @@ using DAL.Model;
 
 namespace DAL.Interfaces
 {
-    public interface IScene
+    public interface ISceneGenerator
     {
         int Id { get; set; }
         string Type { get; }

@@ -4,12 +4,12 @@ using DAL.Model;
 
 namespace DAL.Factories
 {
-    public class SequenceFactory : ISequenceFactory
+    public class SequenceGeneratorFactory : ISequenceGeneratorFactory
     {
-        public ISequence GetSequence(string type)
+        public ISequenceGenerator GetSequence(string type)
         {
             if (type == DataDefinition.SequenceType.MaxImage)
-                return new Sequence();
+                return new MaxImageSequenceGenerator();
             else
                 throw new ArgumentException("CompositionFactory: Composition type argument not valid: {0}", type);
         }

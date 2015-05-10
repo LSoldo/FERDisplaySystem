@@ -16,7 +16,11 @@ namespace DAL
         public DbSet<Terminal> Terminals { get; set; }
         public DbSet<TerminalSequence> TerminalSequences { get; set; }
         public DbSet<SequenceScene> SequenceScenes { get; set; }
-        //public DbSet<IScene> Scenes { get; set; }
-        //public DbSet<ISequence> Sequences { get; set; }
+        public DbSet<Scene> Scenes { get; set; }
+        public DbSet<Sequence> Sequences { get; set; }
+        public DbSet<DataSource> DataSources { get; set; }
+        public DbSet<DisplaySetting> DisplaySettings { get; set; }
+        public DbSet<TimeInterval> TimeIntervals { get; set; }
+
     }
 }

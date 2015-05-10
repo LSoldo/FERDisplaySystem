@@ -13,53 +13,88 @@ namespace UnitTests
     public class DisplaySettingsManagerTest
     {
         [TestMethod]
-        public void TestMethod1()
+
+        public void AddScene_Success()
         {
-            DALTerminal dalTerminal = new DALTerminal();
+            DALScene dalScene = new DALScene();
 
-            var manager = new BLDisplaySettingsManager();
-            var sceneFactory = new SceneFactory();
-            var sequenceFactory = new SequenceFactory();
+            Scene scene = new Scene("Nova scena", DataDefinition.SceneType.Video,
+                new List<DataSource>()
+                {
+                    new DataSource() {Path = "http://www.google.hr"},
+                    new DataSource() {Path = "http://www.youtube.com"}
+                });
 
-            var clock = sceneFactory.GetScene(DataDefinition.SceneType.Clock);
-            clock.Init();
-
-            var sequenceScene = new List<SequenceScene>
-            {
-                new SequenceScene(clock, new List<DataSource>() {new DataSource(){Path=""}}, TimeSpan.FromMilliseconds(20000), false, "sat")
-            };
-
-            var sequence = sequenceFactory.GetSequence(DataDefinition.SequenceType.MaxImage);
-            sequence.Init("Sekvenca", "opis", sequenceScene);
-            sequence.Id = 1;
-
-            DisplaySetting displaySetting;
-            var times = manager.CreateDisplayTimes(DateTime.Now, DateTime.Now.AddSeconds(30), TimeSpan.FromMinutes(10),
-                5,
-                out displaySetting);
-
-            var terminal = new Terminal {Name = "Aula 1", Type = DataDefinition.TerminalType.LED};
-
-            var terminalSequence = new TerminalSequence(sequence, displaySetting, terminal.Id.ToString())
-            {
-                TimeIntervals = times,
-                Name = "Video",
-                CurrentType = DataDefinition.CurrentSequence.ScheduledSequence
-            };
-
-
-            terminal.DefaultSequence = terminalSequence;
-            terminalSequence.CurrentType = DataDefinition.CurrentSequence.DefaultSequence;
-            terminal.CurrentSequenceValidFromToInterval = new TimeInterval()
-            {
-                TimeFrom = DateTime.Now,
-                TimeTo = DateTime.Now.AddSeconds(30)
-            };
-            terminal.AllSequences.Add(terminalSequence);
-
-            int terminalId = dalTerminal.AddTerminal(terminal);
-            dalTerminal.Dispose();
-            Assert.IsTrue(terminalId >=0);
+            int id = dalScene.AddScene(scene);
+            dalScene.Dispose();
+            Assert.IsTrue(id > 0);
         }
+
+        [TestMethod]
+
+        public void EditScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            var list = new List<DataSource>()
+                {
+                    new DataSource() {Path = "http://www.yahoo.hr"},
+                    new DataSource() {Path = "http://www.net.com"}
+                };
+
+            var scene = new Scene("moja scena", DataDefinition.SceneType.Slideshow, list) {Description = "Desc", Id = 1};
+
+            dalScene.UpdateScene(scene);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        }
+        [TestMethod]
+        public void DeactivateScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            dalScene.SetSceneActiveProperty(1, false);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void GetScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            var s1 = dalScene.GetSceneByActiveProperty(false);
+            var s2 = dalScene.GetSceneByType(DataDefinition.SceneType.Slideshow);
+            var s3 = dalScene.GetSceneByType(DataDefinition.SceneType.Clock);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+
+        public void AddSequenceScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            var scene = dalScene.GetSceneById(1);
+
+            var seqScene = new SequenceScene(scene, TimeSpan.FromHours(2), true);
+            int id = dalScene.AddSequenceScene(seqScene);
+            dalScene.Dispose();
+            Assert.IsTrue(id > 0);
+        }
+        [TestMethod]
+        public void UpdateSequenceScene_Success()
+        {
+            DALScene dalScene = new DALScene();
+
+            var seqScene = dalScene.GetSequenceSceneById(1);
+            var scene = dalScene.GetSceneById(2);
+            seqScene.Scene = scene;
+            seqScene.Name = "My name";
+            dalScene.UpdateSequenceScene(seqScene);
+            dalScene.Dispose();
+            Assert.IsTrue(true);
+        } 
     }
 }
