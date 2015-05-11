@@ -96,6 +96,7 @@
     <Compile Include="Model\DisplaySetting.cs" />
     <Compile Include="Model\PowerPointSceneGenerator.cs" />
     <Compile Include="Model\Scene.cs" />
+    <Compile Include="Model\SceneType.cs" />
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\SequenceHistory.cs" />
     <Compile Include="Model\SequenceScene.cs" />

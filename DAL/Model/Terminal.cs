@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,15 +14,17 @@ namespace DAL.Model
         public string Name { get; set; }
         public string Type { get; set; }
         public bool Active { get; set; }
-        public virtual TerminalSequence CurrentSequence { get; set; }
+        [ForeignKey("ManualSequenceId")]
         public virtual TerminalSequence ManualSequence { get; set; }
+        public int? ManualSequenceId { get; set; }
+        [ForeignKey("DefaultSequenceId")]
         public virtual TerminalSequence DefaultSequence { get; set; }
-        public virtual List<TerminalSequence> AllSequences { get; set; }
-        public virtual TimeInterval CurrentSequenceValidFromToInterval { get; set; }
+        public int? DefaultSequenceId { get; set; }
+        public virtual List<TerminalSequence> TerminalSequencePool { get; set; }
 
         public Terminal()
         {
-            this.AllSequences = new List<TerminalSequence>();
+            this.TerminalSequencePool = new List<TerminalSequence>();
             this.Active = false;
         }
 

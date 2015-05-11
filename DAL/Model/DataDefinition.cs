@@ -64,9 +64,9 @@ namespace DAL.Model
 
         public abstract class CurrentSequence
         {
-            public static string ScheduledSequence = "Scheduled sequence";
-            public static string DefaultSequence = "Default sequence";
-            public static string ManualSequence = "Manual sequence";
+            public const string ScheduledSequence = "Scheduled sequence";
+            public const string DefaultSequence = "Default sequence";
+            public const string ManualSequence = "Manual sequence";
         }
 
         public abstract class SceneDefinition

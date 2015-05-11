@@ -168,5 +168,92 @@ namespace UnitTests
             Assert.IsTrue(true);
         }
 
+        [TestMethod]
+        public void AddTerminalSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            var seq = dalSequence.GetSequenceById(1);
+
+            var termSeq = new TerminalSequence(seq,
+                new DisplaySetting()
+                {
+                    ConsecutiveTimesToShow = 5,
+                    DurationSpan = TimeSpan.FromHours(2),
+                    InsertionTs = DateTime.Now,
+                    StartTime = DateTime.Now,
+                    ValidUntil = DateTime.Now
+                }, "4");
+            int id = dalSequence.AddTerminalSequence(termSeq);
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void RemoveTerminalSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            dalSequence.RemoveTerminalSequence(1);
+
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void UpdateTerminalSequence_Success()
+        {
+            var dalSequence = new DALSequence();
+            var termSeq = dalSequence.GetTerminalSequenceById(2);
+            termSeq.Active = false;
+            termSeq.CurrentType = DataDefinition.CurrentSequence.ManualSequence;
+
+            dalSequence.UpdateTerminalSequence(termSeq);
+
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void AddTerminal_Success()
+        {
+            var dalSequence = new DALSequence();
+            var dalTerminal = new DALTerminal();
+            //var termSeq = dalSequence.GetTerminalSequenceById(1);
+            var term = new Terminal {Name = "Moj terminal", Active = true, Type = DataDefinition.TerminalType.CRT};
+            var seq = dalSequence.GetSequenceById(1);
+            var termSeq = new TerminalSequence(seq, new DisplaySetting()
+            {
+                ConsecutiveTimesToShow = 5,
+                DurationSpan = TimeSpan.FromHours(2),
+                InsertionTs = DateTime.Now,
+                StartTime = DateTime.Now,
+                ValidUntil = DateTime.Now
+            }, "4");
+            //term.ManualSequence = termSeq;
+            term.TerminalSequencePool.Add(termSeq);
+            dalTerminal.AddTerminal(term, dalSequence.GetContext());
+
+            dalSequence.Dispose();
+            dalTerminal.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void GetTerminal_Success()
+        {
+            var dalTerminal = new DALTerminal();
+            var terminal = dalTerminal.GetTerminalById(4);
+            dalTerminal.Dispose();
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public void DeleteTerminal_Success()
+        {
+            var dalTerminal = new DALTerminal();
+            dalTerminal.RemoveTerminal(4);
+            dalTerminal.Dispose();
+            Assert.IsTrue(true);
+        }
+
     }
 }
