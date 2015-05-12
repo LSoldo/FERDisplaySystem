@@ -255,5 +255,26 @@ namespace UnitTests
             Assert.IsTrue(true);
         }
 
+        [TestMethod]
+        public void UpdateTerminal_Success()
+        {
+            var dalTerminal = new DALTerminal();
+            var dalSequence = new DALSequence();
+
+            var seq = dalSequence.GetSequenceById(2);
+            var termSeq = new TerminalSequence(seq, new DisplaySetting()
+            {
+                ConsecutiveTimesToShow = 5,
+                DurationSpan = TimeSpan.FromHours(2),
+                InsertionTs = DateTime.Now,
+                StartTime = DateTime.Now,
+                ValidUntil = DateTime.Now
+            }, "4");
+            dalTerminal.UpdateOrAddTerminalSequence(3, termSeq, DataDefinition.CurrentSequence.ScheduledSequence, dalSequence.GetContext());
+            dalTerminal.Dispose();
+            dalSequence.Dispose();
+            Assert.IsTrue(true);
+        }
+
     }
 }
