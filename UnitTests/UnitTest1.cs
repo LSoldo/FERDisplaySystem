@@ -230,7 +230,7 @@ namespace UnitTests
             }, "4");
             //term.ManualSequence = termSeq;
             term.TerminalSequencePool.Add(termSeq);
-            dalTerminal.AddTerminal(term, dalSequence.GetContext());
+            dalTerminal.AddTerminal(term);
 
             dalSequence.Dispose();
             dalTerminal.Dispose();
@@ -258,9 +258,9 @@ namespace UnitTests
         [TestMethod]
         public void UpdateTerminal_Success()
         {
-            var dalTerminal = new DALTerminal();
+            
             var dalSequence = new DALSequence();
-
+            var dalTerminal = new DALTerminal(dalSequence.GetContext());
             var seq = dalSequence.GetSequenceById(2);
             var termSeq = new TerminalSequence(seq, new DisplaySetting()
             {
@@ -270,7 +270,7 @@ namespace UnitTests
                 StartTime = DateTime.Now,
                 ValidUntil = DateTime.Now
             }, "4");
-            dalTerminal.UpdateOrAddTerminalSequence(3, termSeq, DataDefinition.CurrentSequence.ScheduledSequence, dalSequence.GetContext());
+            dalTerminal.UpdateOrAddTerminalSequence(3, termSeq, DataDefinition.CurrentSequence.ScheduledSequence);
             dalTerminal.Dispose();
             dalSequence.Dispose();
             Assert.IsTrue(true);

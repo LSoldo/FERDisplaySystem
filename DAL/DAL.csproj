@@ -113,6 +113,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="ClassDiagram1.cd" />
     <None Include="CompositionDefinition.json" />
     <None Include="packages.config" />
     <None Include="SceneDefinition.json" />

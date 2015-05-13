@@ -157,13 +157,13 @@ namespace DAL
             }
         }
 
-        public void UpdateTerminalSequenceDisplaySetting(int id, DisplaySetting newSetting)
+        public void UpdateTerminalSequenceDisplaySetting(int terminalSequenceId, DisplaySetting newSetting)
         {
             try
             {
                 var termSeq = this.context.TerminalSequences
                     .Include(t => t.Setting)
-                    .SingleOrDefault(x => x.Id == id);
+                    .SingleOrDefault(x => x.Id == terminalSequenceId);
 
                 if (termSeq == null)
                     throw new Exception("Terminal sequence not found");
@@ -175,17 +175,17 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error while updating terminal sequence, id: {0}, {1} ", id, ex.Message));
+                throw new Exception(string.Format("Error while updating terminal sequence, id: {0}, {1} ", terminalSequenceId, ex.Message));
             }
         }
 
-        public void UpdateTerminalSequenceTimeIntervals(int id, List<TimeInterval> newTimeIntervals)
+        public void UpdateTerminalSequenceTimeIntervals(int terminalSequenceId, List<TimeInterval> newTimeIntervals)
         {
             try
             {
                 var termSeq = this.context.TerminalSequences
                     .Include(t => t.TimeIntervals)
-                    .SingleOrDefault(x => x.Id == id);
+                    .SingleOrDefault(x => x.Id == terminalSequenceId);
 
                 if (termSeq == null)
                     throw new Exception("Terminal sequence not found");
@@ -197,7 +197,7 @@ namespace DAL
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Error while updating terminal sequence, id: {0}, {1} ", id, ex.Message));
+                throw new Exception(string.Format("Error while updating terminal sequence, id: {0}, {1} ", terminalSequenceId, ex.Message));
             }
         }
 
